@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS — Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                NE<span>✕</span>US
+                <p>MMA</p>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="#" class="nav-item">Clases</a>
+                <a href="#" class="nav-item">Sesiones</a>
+                <a href="#" class="nav-item">Reservas</a>
+                {% if user.role == 'ADMIN' %}
+                <a href="#" class="nav-item">Usuarios</a>
+                {% endif %}
+            </nav>
+            <div class="sidebar-footer">
+                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
+                <p class="user-role">{{ user.get_role_display }}</p>
+                <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+            <div class="topbar">
+                <h1>Dashboard</h1>
+                <p>Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <p class="stat-num">{{ clases_activas }}</p>
+                    <p class="stat-label">Clases activas</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-num">{{ sesiones_hoy }}</p>
+                    <p class="stat-label">Sesiones hoy</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-num">{{ reservas_totales }}</p>
+                    <p class="stat-label">Reservas totales</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-num">{{ usuarios_registrados }}</p>
+                    <p class="stat-label">Usuarios registrados</p>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0A0A0A;
+    color: #F0F0F0;
+    min-height: 100vh;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background: #111;
+    border-right: 1px solid #1E1E1E;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    height: 100vh;
+}
+
+.logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: #F0F0F0;
+    letter-spacing: 2px;
+    padding: 0 20px;
+    margin-bottom: 32px;
+}
+
+.logo span {
+    color: #C0152A;
+}
+
+.logo p {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 6px;
+    color: #555;
+    font-weight: 600;
+    margin-top: -4px;
+}
+
+nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    padding: 12px 20px;
+    font-size: 13px;
+    color: #555;
+    text-decoration: none;
+    transition: all 0.15s;
+    border-right: 2px solid transparent;
+}
+
+.nav-item:hover {
+    color: #888;
+    background: #1A1A1A;
+}
+
+.nav-item.active {
+    color: #F0F0F0;
+    background: #1A0509;
+    border-right-color: #C0152A;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #1E1E1E;
+}
+
+.user-info {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F0F0F0;
+    margin-bottom: 2px;
+}
+
+.user-role {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+}
+
+.logout {
+    font-size: 12px;
+    color: #C0152A;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.logout:hover {
+    color: #A01020;
+}
+
+/* Main */
+.main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px;
+}
+
+.topbar {
+    margin-bottom: 32px;
+    border-bottom: 1px solid #1E1E1E;
+    padding-bottom: 24px;
+}
+
+.topbar h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: #F0F0F0;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.topbar p {
+    font-size: 14px;
+    color: #555;
+    margin-top: 4px;
+}
+
+/* Stats */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: #F0F0F0;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+}

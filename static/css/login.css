@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0A0A0A;
+    color: #F0F0F0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.login-box {
+    background: #1A1A1A;
+    border: 1px solid #2A2A2A;
+    border-radius: 12px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 32px;
+    color: #F0F0F0;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: #C0152A;
+}
+
+.logo p {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 8px;
+    color: #555;
+    font-weight: 600;
+    margin-top: -8px;
+}
+
+.alert {
+    background: #2A0509;
+    border: 1px solid #C0152A;
+    color: #C0152A;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    background: #0A0A0A;
+    border: 1px solid #2A2A2A;
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: #F0F0F0;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #C0152A;
+}
+
+.form-group input::placeholder {
+    color: #555;
+}
+
+button[type="submit"] {
+    width: 100%;
+    background: #C0152A;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+    margin-top: 8px;
+}
+
+button[type="submit"]:hover {
+    background: #A01020;
+}
