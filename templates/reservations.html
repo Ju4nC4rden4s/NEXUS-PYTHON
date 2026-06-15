@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS — Reservas</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/classes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reservations.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                NE<span>✕</span>US
+                <p>MMA</p>
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
+                <a href="{% url 'classes' %}" class="nav-item">Clases</a>
+                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
+                <a href="{% url 'reservations' %}" class="nav-item active">Reservas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
+                <p class="user-role">{{ user.get_role_display }}</p>
+                <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="topbar">
+                <div>
+                    <h1>Reservas</h1>
+                    <p>{% if user.role == 'ADMIN' %}Todas las reservas{% else %}Mis reservas{% endif %}</p>
+                </div>
+                {% if user.role != 'ADMIN' %}
+                <a href="{% url 'reservation_create' %}" class="btn-red">+ Nueva reserva</a>
+                {% endif %}
+            </div>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if show_form %}
+            <div class="form-card">
+                <h2>Nueva reserva</h2>
+                <form method="post" action="{% url 'reservation_create' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Sesión disponible</label>
+                        <select name="session" required>
+                            <option value="">Selecciona una sesión</option>
+                            {% for sesion in sesiones %}
+                            <option value="{{ sesion.pk }}">
+                                {{ sesion.gym_class.name }} —
+                                {{ sesion.start_datetime|date:"d/m/Y H:i" }} —
+                                {{ sesion.available_spots }} cupos disponibles
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <a href="{% url 'reservations' %}" class="btn-outline">Cancelar</a>
+                        <button type="submit" class="btn-red">Reservar</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if reservas %}
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            {% if user.role == 'ADMIN' %}
+                            <th>Usuario</th>
+                            {% endif %}
+                            <th>Clase</th>
+                            <th>Fecha y hora</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                        <tr>
+                            {% if user.role == 'ADMIN' %}
+                            <td>{{ reserva.user.get_full_name|default:reserva.user.username }}</td>
+                            {% endif %}
+                            <td>
+                                <p class="class-name">{{ reserva.session.gym_class.name }}</p>
+                                <p class="class-desc">{{ reserva.session.coach.get_full_name|default:reserva.session.coach.username }}</p>
+                            </td>
+                            <td>{{ reserva.session.start_datetime|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if reserva.status == 'RESERVED' %}
+                                <span class="badge badge-active">Reservada</span>
+                                {% elif reserva.status == 'CANCELLED' %}
+                                <span class="badge badge-inactive">Cancelada</span>
+                                {% elif reserva.status == 'ATTENDED' %}
+                                <span class="badge badge-intermediate">Asistió</span>
+                                {% else %}
+                                <span class="badge badge-danger">No asistió</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reserva.status == 'RESERVED' and user.role != 'ADMIN' %}
+                                <a href="{% url 'reservation_cancel' reserva.pk %}" class="btn-toggle">
+                                    Cancelar
+                                </a>
+                                {% else %}
+                                <span style="color: #2A2A2A">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty">
+                <p>No hay reservas registradas aún.</p>
+                {% if user.role != 'ADMIN' %}
+                <a href="{% url 'reservation_create' %}" class="btn-red">+ Hacer primera reserva</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </main>
+    </div>
+</body>
+</html>
