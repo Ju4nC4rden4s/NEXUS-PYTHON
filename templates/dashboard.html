@@ -21,18 +21,21 @@
                 <p>MMA</p>
             </div>
             <nav>
-                <a href="#" class="nav-item active">Dashboard</a>
-                <a href="#" class="nav-item">Clases</a>
-                <a href="#" class="nav-item">Sesiones</a>
-                <a href="#" class="nav-item">Reservas</a>
+                <a href="{% url 'dashboard' %}" class="nav-item active">Dashboard</a>
+                <a href="{% url 'classes' %}" class="nav-item">Clases</a>
+                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
+                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
                 {% if user.role == 'ADMIN' %}
-                <a href="#" class="nav-item">Usuarios</a>
+                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
                 {% endif %}
             </nav>
             <div class="sidebar-footer">
                 <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
                 <p class="user-role">{{ user.get_role_display }}</p>
-                <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout">Cerrar sesión</button>
+                </form>
             </div>
         </aside>
 
@@ -56,10 +59,12 @@
                     <p class="stat-num">{{ reservas_totales }}</p>
                     <p class="stat-label">Reservas totales</p>
                 </div>
+                {% if user.role == 'ADMIN' %}
                 <div class="stat-card">
                     <p class="stat-num">{{ usuarios_registrados }}</p>
                     <p class="stat-label">Usuarios registrados</p>
                 </div>
+                {% endif %}
             </div>
         </main>
 

@@ -4,6 +4,7 @@ from django.utils import timezone
 from apps.classes.models import Class, ClassSession
 from apps.reservations.models import Reservation
 from apps.users.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 @login_required
@@ -25,3 +26,25 @@ def dashboard(request):
         'reservas_totales': reservas_totales,
         'usuarios_registrados': usuarios_registrados,
     })
+
+@login_required
+def users_list(request):
+    if request.user.role != 'ADMIN':
+        return redirect('dashboard')
+    
+    usuarios = User.objects.all().order_by('role', 'username')
+    return render(request, 'users.html', {
+        'usuarios': usuarios,
+        'user': request.user
+    })
+
+
+@login_required
+def user_toggle(request, pk):
+    if request.user.role != 'ADMIN':
+        return redirect('dashboard')
+    
+    usuario = get_object_or_404(User, pk=pk)
+    usuario.is_active = not usuario.is_active
+    usuario.save()
+    return redirect('users')

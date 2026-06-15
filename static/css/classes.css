@@ -193,3 +193,6 @@ tbody tr:hover {
     align-items: center;
     gap: 16px;
 }
+.btn-danger {
+    color: #C0152A !important;
+}

@@ -24,13 +24,19 @@
             <nav>
                 <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
                 <a href="{% url 'classes' %}" class="nav-item active">Clases</a>
-                <a href="#" class="nav-item">Sesiones</a>
-                <a href="#" class="nav-item">Reservas</a>
+                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
+                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
+                {% if user.role == 'ADMIN' %}
+                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
+                {% endif %}
             </nav>
             <div class="sidebar-footer">
                 <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
                 <p class="user-role">{{ user.get_role_display }}</p>
-                <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout">Cerrar sesión</button>
+                </form>
             </div>
         </aside>
 
@@ -119,8 +125,13 @@
                             </td>
                             {% if user.role == 'ADMIN' %}
                             <td>
+                                <a href="{% url 'class_edit' clase.pk %}" class="btn-toggle">Editar</a>
                                 <a href="{% url 'class_toggle' clase.pk %}" class="btn-toggle">
                                     {% if clase.is_active %}Desactivar{% else %}Activar{% endif %}
+                                </a>
+                                <a href="{% url 'class_delete' clase.pk %}" class="btn-toggle btn-danger"
+                                    onclick="return confirm('¿Seguro que quieres eliminar esta clase?')">
+                                    Eliminar
                                 </a>
                             </td>
                             {% endif %}
@@ -141,4 +152,5 @@
 
     </div>
 </body>
+
 </html>

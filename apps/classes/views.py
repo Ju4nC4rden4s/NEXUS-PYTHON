@@ -79,3 +79,33 @@ def session_create(request):
         'show_form': True,
         'user': request.user
     })
+
+@login_required
+def class_edit(request, pk):
+    if request.user.role != 'ADMIN':
+        return redirect('classes')
+    
+    clase = get_object_or_404(Class, pk=pk)
+    
+    if request.method == 'POST':
+        clase.name = request.POST.get('name')
+        clase.description = request.POST.get('description')
+        clase.duration_minutes = request.POST.get('duration_minutes')
+        clase.level = request.POST.get('level')
+        clase.save()
+        return redirect('classes')
+
+    return render(request, 'class_edit.html', {
+        'clase': clase,
+        'user': request.user
+    })
+
+
+@login_required
+def class_delete(request, pk):
+    if request.user.role != 'ADMIN':
+        return redirect('classes')
+    
+    clase = get_object_or_404(Class, pk=pk)
+    clase.delete()
+    return redirect('classes')

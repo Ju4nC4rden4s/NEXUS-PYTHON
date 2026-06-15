@@ -162,3 +162,17 @@ nav {
     letter-spacing: 0.08em;
     margin-top: 4px;
 }
+form button.logout {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #C0152A;
+    font-weight: 600;
+    padding: 0;
+}
+
+form button.logout:hover {
+    color: #A01020;
+}
