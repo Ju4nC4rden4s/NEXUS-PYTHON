@@ -1,155 +1,204 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Sesiones</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/classes.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sessions.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+{% block title %}
+Sesiones
+{% endblock %}
 
-<body>
-    <div class="layout">
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/classes.css' %}">
+<link rel="stylesheet" href="{% static 'css/sessions.css' %}">
+{% endblock %}
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
-                <a href="{% url 'classes' %}" class="nav-item">Clases</a>
-                <a href="{% url 'sessions' %}" class="nav-item active">Sesiones</a>
-                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-footer">
-                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
-                <p class="user-role">{{ user.get_role_display }}</p>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout">Cerrar sesión</button>
-                </form>
-            </div>
-        </aside>
+{% block content %}
 
-        <!-- Main -->
-        <main class="main">
-            <div class="topbar">
-                <div>
-                    <h1>Sesiones</h1>
-                    <p>Gestión de sesiones programadas</p>
-                </div>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'session_create' %}" class="btn-red">+ Nueva sesión</a>
-                {% endif %}
-            </div>
-
-            {% if show_form %}
-            <div class="form-card">
-                <h2>Nueva sesión</h2>
-                <form method="post" action="{% url 'session_create' %}">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Clase</label>
-                            <select name="gym_class" required>
-                                <option value="">Selecciona una clase</option>
-                                {% for clase in clases %}
-                                <option value="{{ clase.pk }}">{{ clase.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Entrenador</label>
-                            <select name="coach" required>
-                                <option value="">Selecciona un entrenador</option>
-                                {% for coach in coaches %}
-                                <option value="{{ coach.pk }}">{{ coach.get_full_name|default:coach.username }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Fecha y hora</label>
-                            <input type="datetime-local" name="start_datetime" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Capacidad (máx. 8)</label>
-                            <input type="number" name="capacity" min="1" max="8" placeholder="8" required>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <a href="{% url 'sessions' %}" class="btn-outline">Cancelar</a>
-                        <button type="submit" class="btn-red">Guardar</button>
-                    </div>
-                </form>
-            </div>
-            {% endif %}
-
-            {% if sesiones %}
-            <div class="table-card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Clase</th>
-                            <th>Entrenador</th>
-                            <th>Fecha y hora</th>
-                            <th>Cupos</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for sesion in sesiones %}
-                        <tr>
-                            <td>
-                                <p class="class-name">{{ sesion.gym_class.name }}</p>
-                                <p class="class-desc">{{ sesion.gym_class.get_level_display }}</p>
-                            </td>
-                            <td>{{ sesion.coach.get_full_name|default:sesion.coach.username }}</td>
-                            <td>{{ sesion.start_datetime|date:"d/m/Y H:i" }}</td>
-                            <td>
-                                <span class="cupos">
-                                    {{ sesion.available_spots }}/{{ sesion.capacity }}
-                                </span>
-                                {% if sesion.is_full %}
-                                <span class="badge badge-inactive">Llena</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if sesion.status == 'SCHEDULED' %}
-                                <span class="badge badge-active">Programada</span>
-                                {% elif sesion.status == 'CANCELLED' %}
-                                <span class="badge badge-inactive">Cancelada</span>
-                                {% else %}
-                                <span class="badge badge-intermediate">Completada</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty">
-                <p>No hay sesiones programadas aún.</p>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'session_create' %}" class="btn-red">+ Crear primera sesión</a>
-                {% endif %}
-            </div>
-            {% endif %}
-
-        </main>
+<div class="topbar">
+    <div>
+        <h1>Sesiones</h1>
+        <p>Gestión de sesiones programadas</p>
     </div>
-</body>
 
-</html>
+    {% if user.role == 'ADMIN' %}
+    <a href="{% url 'session_create' %}" class="btn-red">
+        + Nueva sesión
+    </a>
+    {% endif %}
+</div>
+
+{% if show_form %}
+
+<div class="form-card">
+
+    <h2>Nueva sesión</h2>
+
+    <form method="post" action="{% url 'session_create' %}">
+        {% csrf_token %}
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Clase</label>
+
+                <select name="gym_class" required>
+                    <option value="">Selecciona una clase</option>
+
+                    {% for clase in clases %}
+                    <option value="{{ clase.pk }}">
+                        {{ clase.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Entrenador</label>
+
+                <select name="coach" required>
+                    <option value="">Selecciona un entrenador</option>
+
+                    {% for coach in coaches %}
+                    <option value="{{ coach.pk }}">
+                        {{ coach.get_full_name|default:coach.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Fecha y hora</label>
+                <input type="datetime-local"
+                       name="start_datetime"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>Capacidad (máx. 8)</label>
+                <input type="number"
+                       name="capacity"
+                       min="1"
+                       max="8"
+                       placeholder="8"
+                       required>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'sessions' %}" class="btn-outline">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn-red">
+                Guardar
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+{% if sesiones %}
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Clase</th>
+                <th>Entrenador</th>
+                <th>Fecha y hora</th>
+                <th>Cupos</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for sesion in sesiones %}
+
+            <tr>
+
+                <td>
+                    <p class="class-name">
+                        {{ sesion.gym_class.name }}
+                    </p>
+
+                    <p class="class-desc">
+                        {{ sesion.gym_class.get_level_display }}
+                    </p>
+                </td>
+
+                <td>
+                    {{ sesion.coach.get_full_name|default:sesion.coach.username }}
+                </td>
+
+                <td>
+                    {{ sesion.start_datetime|date:"d/m/Y H:i" }}
+                </td>
+
+                <td>
+                    <span class="cupos">
+                        {{ sesion.available_spots }}/{{ sesion.capacity }}
+                    </span>
+
+                    {% if sesion.is_full %}
+                    <span class="badge badge-inactive">
+                        Llena
+                    </span>
+                    {% endif %}
+                </td>
+
+                <td>
+
+                    {% if sesion.status == 'SCHEDULED' %}
+                    <span class="badge badge-active">
+                        Programada
+                    </span>
+
+                    {% elif sesion.status == 'CANCELLED' %}
+                    <span class="badge badge-inactive">
+                        Cancelada
+                    </span>
+
+                    {% else %}
+                    <span class="badge badge-intermediate">
+                        Completada
+                    </span>
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% else %}
+
+<div class="empty">
+
+    <p>No hay sesiones programadas aún.</p>
+
+    {% if user.role == 'ADMIN' %}
+    <a href="{% url 'session_create' %}" class="btn-red">
+        + Crear primera sesión
+    </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}

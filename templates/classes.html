@@ -1,156 +1,201 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Clases</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/classes.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+{% block title %}
+Clases
+{% endblock %}
 
-<body>
-    <div class="layout">
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/classes.css' %}">
+{% endblock %}
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
-                <a href="{% url 'classes' %}" class="nav-item active">Clases</a>
-                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
-                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-footer">
-                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
-                <p class="user-role">{{ user.get_role_display }}</p>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout">Cerrar sesión</button>
-                </form>
-            </div>
-        </aside>
+{% block content %}
 
-        <!-- Main -->
-        <main class="main">
-            <div class="topbar">
-                <div>
-                    <h1>Clases</h1>
-                    <p>Gestión de clases del gimnasio</p>
-                </div>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'class_create' %}" class="btn-red">+ Nueva clase</a>
-                {% endif %}
-            </div>
-
-            {% if show_form %}
-            <div class="form-card">
-                <h2>Nueva clase</h2>
-                <form method="post" action="{% url 'class_create' %}">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nombre</label>
-                            <input type="text" name="name" placeholder="Ej: Muay Thai" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Duración (minutos)</label>
-                            <input type="number" name="duration_minutes" placeholder="60" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nivel</label>
-                            <select name="level">
-                                <option value="BEGINNER">Principiante</option>
-                                <option value="INTERMEDIATE">Intermedio</option>
-                                <option value="ADVANCED">Avanzado</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción</label>
-                        <textarea name="description" placeholder="Descripción de la clase..." rows="3"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <a href="{% url 'classes' %}" class="btn-outline">Cancelar</a>
-                        <button type="submit" class="btn-red">Guardar</button>
-                    </div>
-                </form>
-            </div>
-            {% endif %}
-
-            {% if clases %}
-            <div class="table-card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Nivel</th>
-                            <th>Duración</th>
-                            <th>Estado</th>
-                            {% if user.role == 'ADMIN' %}
-                            <th>Acciones</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for clase in clases %}
-                        <tr>
-                            <td>
-                                <p class="class-name">{{ clase.name }}</p>
-                                <p class="class-desc">{{ clase.description|truncatechars:60 }}</p>
-                            </td>
-                            <td>
-                                <span class="badge badge-{{ clase.level|lower }}">
-                                    {{ clase.get_level_display }}
-                                </span>
-                            </td>
-                            <td>{{ clase.duration_minutes }} min</td>
-                            <td>
-                                {% if clase.is_active %}
-                                <span class="badge badge-active">Activa</span>
-                                {% else %}
-                                <span class="badge badge-inactive">Inactiva</span>
-                                {% endif %}
-                            </td>
-                            {% if user.role == 'ADMIN' %}
-                            <td>
-                                <a href="{% url 'class_edit' clase.pk %}" class="btn-toggle">Editar</a>
-                                <a href="{% url 'class_toggle' clase.pk %}" class="btn-toggle">
-                                    {% if clase.is_active %}Desactivar{% else %}Activar{% endif %}
-                                </a>
-                                <a href="{% url 'class_delete' clase.pk %}" class="btn-toggle btn-danger"
-                                    onclick="return confirm('¿Seguro que quieres eliminar esta clase?')">
-                                    Eliminar
-                                </a>
-                            </td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty">
-                <p>No hay clases registradas aún.</p>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'class_create' %}" class="btn-red">+ Crear primera clase</a>
-                {% endif %}
-            </div>
-            {% endif %}
-        </main>
-
+<div class="topbar">
+    <div>
+        <h1>Clases</h1>
+        <p>Gestión de clases del gimnasio</p>
     </div>
-</body>
 
-</html>
+    {% if user.role == 'ADMIN' %}
+    <a href="{% url 'class_create' %}" class="btn-red">
+        + Nueva clase
+    </a>
+    {% endif %}
+</div>
+
+{% if show_form %}
+<div class="form-card">
+    <h2>Nueva clase</h2>
+
+    <form method="post" action="{% url 'class_create' %}">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre</label>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Ej: Muay Thai"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Duración (minutos)</label>
+                <input
+                    type="number"
+                    name="duration_minutes"
+                    placeholder="60"
+                    required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nivel</label>
+
+                <select name="level">
+                    <option value="BEGINNER">Principiante</option>
+                    <option value="INTERMEDIATE">Intermedio</option>
+                    <option value="ADVANCED">Avanzado</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Descripción</label>
+
+            <textarea
+                name="description"
+                placeholder="Descripción de la clase..."
+                rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'classes' %}" class="btn-outline">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn-red">
+                Guardar
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+{% if clases %}
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Nivel</th>
+                <th>Duración</th>
+                <th>Estado</th>
+
+                {% if user.role == 'ADMIN' %}
+                <th>Acciones</th>
+                {% endif %}
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for clase in clases %}
+
+            <tr>
+
+                <td>
+                    <p class="class-name">
+                        {{ clase.name }}
+                    </p>
+
+                    <p class="class-desc">
+                        {{ clase.description|truncatechars:60 }}
+                    </p>
+                </td>
+
+                <td>
+                    <span class="badge badge-{{ clase.level|lower }}">
+                        {{ clase.get_level_display }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ clase.duration_minutes }} min
+                </td>
+
+                <td>
+                    {% if clase.is_active %}
+                    <span class="badge badge-active">
+                        Activa
+                    </span>
+                    {% else %}
+                    <span class="badge badge-inactive">
+                        Inactiva
+                    </span>
+                    {% endif %}
+                </td>
+
+                {% if user.role == 'ADMIN' %}
+                <td>
+
+                    <a href="{% url 'class_edit' clase.pk %}"
+                       class="btn-toggle">
+                        Editar
+                    </a>
+
+                    <a href="{% url 'class_toggle' clase.pk %}"
+                       class="btn-toggle">
+
+                        {% if clase.is_active %}
+                        Desactivar
+                        {% else %}
+                        Activar
+                        {% endif %}
+
+                    </a>
+
+                    <a href="{% url 'class_delete' clase.pk %}"
+                       class="btn-toggle btn-danger"
+                       onclick="return confirm('¿Seguro que quieres eliminar esta clase?')">
+
+                        Eliminar
+
+                    </a>
+
+                </td>
+                {% endif %}
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% else %}
+
+<div class="empty">
+
+    <p>No hay clases registradas aún.</p>
+
+    {% if user.role == 'ADMIN' %}
+    <a href="{% url 'class_create' %}" class="btn-red">
+        + Crear primera clase
+    </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}

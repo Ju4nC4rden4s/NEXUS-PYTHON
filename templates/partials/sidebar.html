@@ -1,0 +1,63 @@
+<aside class="sidebar">
+
+    <div class="logo">
+        NE<span>✕</span>US
+        <p>MMA</p>
+    </div>
+
+    <nav>
+
+        <a href="{% url 'dashboard' %}"
+           class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'classes' %}"
+           class="nav-item {% if request.resolver_match.url_name == 'classes' or request.resolver_match.url_name == 'class_create' or request.resolver_match.url_name == 'class_edit' %}active{% endif %}">
+            Clases
+        </a>
+
+        <a href="{% url 'sessions' %}"
+           class="nav-item {% if request.resolver_match.url_name == 'sessions' or request.resolver_match.url_name == 'session_create' %}active{% endif %}">
+            Sesiones
+        </a>
+
+        <a href="{% url 'reservations' %}"
+           class="nav-item {% if request.resolver_match.url_name == 'reservations' or request.resolver_match.url_name == 'reservation_create' %}active{% endif %}">
+            Reservas
+        </a>
+
+       {% if user.role == 'ADMIN' %}
+        <a href="{% url 'users' %}"
+        class="nav-item {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
+            Usuarios
+        </a>
+
+        <a href="{% url 'coaches' %}"
+        class="nav-item {% if request.resolver_match.url_name == 'coaches' or request.resolver_match.url_name == 'coach_create' %}active{% endif %}">
+            Entrenadores
+        </a>
+        {% endif %}
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <p class="user-info">
+            {{ user.get_full_name|default:user.username }}
+        </p>
+
+        <p class="user-role">
+            {{ user.get_role_display }}
+        </p>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout">
+                Cerrar sesión
+            </button>
+        </form>
+
+    </div>
+
+</aside>

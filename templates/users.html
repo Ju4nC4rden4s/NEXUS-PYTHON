@@ -1,108 +1,108 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Usuarios</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/classes.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+{% block title %}
+Usuarios
+{% endblock %}
 
-<body>
-    <div class="layout">
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/classes.css' %}">
+{% endblock %}
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
-                <a href="{% url 'classes' %}" class="nav-item">Clases</a>
-                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
-                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'users' %}" class="nav-item active">Usuarios</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-footer">
-                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
-                <p class="user-role">{{ user.get_role_display }}</p>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout">Cerrar sesión</button>
-                </form>
-            </div>
-        </aside>
+{% block content %}
 
-        <!-- Main -->
-        <main class="main">
-            <div class="topbar">
-                <div>
-                    <h1>Usuarios</h1>
-                    <p>Gestión de usuarios del sistema</p>
-                </div>
-            </div>
-
-            <div class="table-card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Nombre</th>
-                            <th>Rol</th>
-                            <th>Teléfono</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for usuario in usuarios %}
-                        <tr>
-                            <td>
-                                <p class="class-name">{{ usuario.username }}</p>
-                                <p class="class-desc">{{ usuario.email }}</p>
-                            </td>
-                            <td>{{ usuario.get_full_name|default:"—" }}</td>
-                            <td>
-                                {% if usuario.role == 'ADMIN' %}
-                                <span class="badge badge-danger">Administrador</span>
-                                {% elif usuario.role == 'COACH' %}
-                                <span class="badge badge-intermediate">Entrenador</span>
-                                {% else %}
-                                <span class="badge badge-active">Cliente</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ usuario.phone|default:"—" }}</td>
-                            <td>
-                                {% if usuario.is_active %}
-                                <span class="badge badge-active">Activo</span>
-                                {% else %}
-                                <span class="badge badge-inactive">Inactivo</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if usuario.pk != user.pk %}
-                                <a href="{% url 'user_toggle' usuario.pk %}" class="btn-toggle">
-                                    {% if usuario.is_active %}Desactivar{% else %}Activar{% endif %}
-                                </a>
-                                {% else %}
-                                <span style="color: #2A2A2A">—</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-        </main>
+<div class="topbar">
+    <div>
+        <h1>Usuarios</h1>
+        <p>Gestión de usuarios del sistema</p>
     </div>
-</body>
+</div>
 
-</html>
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for usuario in usuarios %}
+
+            <tr>
+
+                <td>
+                    <p class="class-name">{{ usuario.username }}</p>
+                    <p class="class-desc">{{ usuario.email }}</p>
+                </td>
+
+                <td>
+                    {{ usuario.get_full_name|default:"—" }}
+                </td>
+
+                <td>
+                    {% if usuario.role == 'ADMIN' %}
+                    <span class="badge badge-danger">
+                        Administrador
+                    </span>
+
+                    {% elif usuario.role == 'COACH' %}
+                    <span class="badge badge-intermediate">
+                        Entrenador
+                    </span>
+
+                    {% else %}
+                    <span class="badge badge-active">
+                        Cliente
+                    </span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ usuario.phone|default:"—" }}
+                </td>
+
+                <td>
+                    {% if usuario.is_active %}
+                    <span class="badge badge-active">
+                        Activo
+                    </span>
+                    {% else %}
+                    <span class="badge badge-inactive">
+                        Inactivo
+                    </span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if usuario.pk != user.pk %}
+                    <a href="{% url 'user_toggle' usuario.pk %}"
+                       class="btn-toggle">
+
+                        {% if usuario.is_active %}
+                        Desactivar
+                        {% else %}
+                        Activar
+                        {% endif %}
+
+                    </a>
+                    {% else %}
+                    <span style="color: #2A2A2A">—</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

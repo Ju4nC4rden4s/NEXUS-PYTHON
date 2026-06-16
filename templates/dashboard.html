@@ -1,74 +1,40 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Dashboard</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+{% block title %}
+Dashboard
+{% endblock %}
 
-<body>
-    <div class="layout">
+{% block content %}
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-item active">Dashboard</a>
-                <a href="{% url 'classes' %}" class="nav-item">Clases</a>
-                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
-                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-footer">
-                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
-                <p class="user-role">{{ user.get_role_display }}</p>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout">Cerrar sesión</button>
-                </form>
-            </div>
-        </aside>
+<div class="topbar">
+    <h1>Dashboard</h1>
+    <p>Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+</div>
 
-        <!-- Main content -->
-        <main class="main">
-            <div class="topbar">
-                <h1>Dashboard</h1>
-                <p>Bienvenido, {{ user.get_full_name|default:user.username }}</p>
-            </div>
+<div class="stats">
 
-            <div class="stats">
-                <div class="stat-card">
-                    <p class="stat-num">{{ clases_activas }}</p>
-                    <p class="stat-label">Clases activas</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-num">{{ sesiones_hoy }}</p>
-                    <p class="stat-label">Sesiones hoy</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-num">{{ reservas_totales }}</p>
-                    <p class="stat-label">Reservas totales</p>
-                </div>
-                {% if user.role == 'ADMIN' %}
-                <div class="stat-card">
-                    <p class="stat-num">{{ usuarios_registrados }}</p>
-                    <p class="stat-label">Usuarios registrados</p>
-                </div>
-                {% endif %}
-            </div>
-        </main>
-
+    <div class="stat-card">
+        <p class="stat-num">{{ clases_activas }}</p>
+        <p class="stat-label">Clases activas</p>
     </div>
-</body>
 
-</html>
+    <div class="stat-card">
+        <p class="stat-num">{{ sesiones_hoy }}</p>
+        <p class="stat-label">Sesiones hoy</p>
+    </div>
+
+    <div class="stat-card">
+        <p class="stat-num">{{ reservas_totales }}</p>
+        <p class="stat-label">Reservas totales</p>
+    </div>
+
+    {% if user.role == 'ADMIN' %}
+    <div class="stat-card">
+        <p class="stat-num">{{ usuarios_registrados }}</p>
+        <p class="stat-label">Usuarios registrados</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

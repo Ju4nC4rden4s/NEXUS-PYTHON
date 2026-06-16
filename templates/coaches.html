@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Entrenadores
+{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/classes.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+    <div>
+        <h1>Entrenadores</h1>
+        <p>Gestión de entrenadores del sistema</p>
+    </div>
+
+    <a href="{% url 'coach_create' %}" class="btn-red">
+        + Nuevo entrenador
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% if show_form %}
+
+<div class="form-card">
+
+    <h2>Nuevo entrenador</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" name="first_name">
+            </div>
+
+            <div class="form-group">
+                <label>Apellido</label>
+                <input type="text" name="last_name">
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" name="phone">
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" required>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <a href="{% url 'coaches' %}" class="btn-outline">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn-red">
+                Guardar
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for coach in coaches %}
+
+            <tr>
+
+                <td>
+                    <p class="class-name">{{ coach.username }}</p>
+                    <p class="class-desc">{{ coach.email }}</p>
+                </td>
+
+                <td>
+                    {{ coach.get_full_name|default:"—" }}
+                </td>
+
+                <td>
+                    {{ coach.phone|default:"—" }}
+                </td>
+
+                <td>
+                    {% if coach.is_active %}
+                    <span class="badge badge-active">
+                        Activo
+                    </span>
+                    {% else %}
+                    <span class="badge badge-inactive">
+                        Inactivo
+                    </span>
+                    {% endif %}
+                </td>
+
+                <td>
+
+                    <a href="{% url 'coach_toggle' coach.pk %}"
+                       class="btn-toggle">
+
+                        {% if coach.is_active %}
+                        Desactivar
+                        {% else %}
+                        Activar
+                        {% endif %}
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="5" style="text-align:center;">
+                    No hay entrenadores registrados.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

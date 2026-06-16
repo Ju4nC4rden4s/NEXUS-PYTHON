@@ -1,91 +1,109 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Editar Clase</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/classes.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-</head>
+{% block title %}
+Editar Clase
+{% endblock %}
 
-<body>
-    <div class="layout">
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/classes.css' %}">
+{% endblock %}
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
-            <nav>
-                <a href="{% url 'dashboard' %}" class="nav-item">Dashboard</a>
-                <a href="{% url 'classes' %}" class="nav-item active">Clases</a>
-                <a href="{% url 'sessions' %}" class="nav-item">Sesiones</a>
-                <a href="{% url 'reservations' %}" class="nav-item">Reservas</a>
-                {% if user.role == 'ADMIN' %}
-                <a href="{% url 'users' %}" class="nav-item">Usuarios</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-footer">
-                <p class="user-info">{{ user.get_full_name|default:user.username }}</p>
-                <p class="user-role">{{ user.get_role_display }}</p>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout">Cerrar sesión</button>
-                </form>
-            </div>
-        </aside>
+{% block content %}
 
-        <!-- Main -->
-        <main class="main">
-            <div class="topbar">
-                <div>
-                    <h1>Editar Clase</h1>
-                    <p>Modificar información de {{ clase.name }}</p>
-                </div>
-                <a href="{% url 'classes' %}" class="btn-outline">Volver</a>
-            </div>
-
-            <div class="form-card">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nombre</label>
-                            <input type="text" name="name" value="{{ clase.name }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Duración (minutos)</label>
-                            <input type="number" name="duration_minutes" value="{{ clase.duration_minutes }}" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nivel</label>
-                            <select name="level">
-                                <option value="BEGINNER" {% if clase.level == 'BEGINNER' %}selected{% endif %}>Principiante</option>
-                                <option value="INTERMEDIATE" {% if clase.level == 'INTERMEDIATE' %}selected{% endif %}>Intermedio</option>
-                                <option value="ADVANCED" {% if clase.level == 'ADVANCED' %}selected{% endif %}>Avanzado</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción</label>
-                        <textarea name="description" rows="3">{{ clase.description }}</textarea>
-                    </div>
-                    <div class="form-actions">
-                        <a href="{% url 'classes' %}" class="btn-outline">Cancelar</a>
-                        <button type="submit" class="btn-red">Guardar cambios</button>
-                    </div>
-                </form>
-            </div>
-
-        </main>
+<div class="topbar">
+    <div>
+        <h1>Editar Clase</h1>
+        <p>Modificar información de {{ clase.name }}</p>
     </div>
-</body>
 
-</html>
+    <a href="{% url 'classes' %}" class="btn-outline">
+        Volver
+    </a>
+</div>
+
+<div class="form-card">
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Nombre</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ clase.name }}"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Duración (minutos)</label>
+
+                <input
+                    type="number"
+                    name="duration_minutes"
+                    value="{{ clase.duration_minutes }}"
+                    required>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label>Nivel</label>
+
+                <select name="level">
+
+                    <option value="BEGINNER"
+                        {% if clase.level == 'BEGINNER' %}selected{% endif %}>
+                        Principiante
+                    </option>
+
+                    <option value="INTERMEDIATE"
+                        {% if clase.level == 'INTERMEDIATE' %}selected{% endif %}>
+                        Intermedio
+                    </option>
+
+                    <option value="ADVANCED"
+                        {% if clase.level == 'ADVANCED' %}selected{% endif %}>
+                        Avanzado
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Descripción</label>
+
+            <textarea
+                name="description"
+                rows="3">{{ clase.description }}</textarea>
+
+        </div>
+
+        <div class="form-actions">
+
+            <a href="{% url 'classes' %}" class="btn-outline">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn-red">
+                Guardar cambios
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -21,3 +21,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.role})"
+    
+class Coach(User):
+    class Meta:
+        proxy = True
+        verbose_name = "Profesor"
+        verbose_name_plural = "Profesores"
