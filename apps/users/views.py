@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
+=======
+from django.db.models import Q
+from django.shortcuts import render
+>>>>>>> 0020f04eaf648899926771deb16bdfe8c7fb4583
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse
@@ -127,10 +132,36 @@ def users_list(request):
     if request.user.role != 'ADMIN':
         return redirect('dashboard')
     
+    username_filter = request.GET.get('username', '').strip()
+    role_filter = request.GET.get('role', '')
+    status_filter = request.GET.get('status', '')
+
     usuarios = User.objects.all().order_by('role', 'username')
+
+    if username_filter:
+        usuarios = usuarios.filter(
+            Q(username__icontains=username_filter) |
+            Q(first_name__icontains=username_filter) |
+            Q(last_name__icontains=username_filter)
+        )
+
+    if role_filter in [User.Roles.ADMIN, User.Roles.COACH, User.Roles.CLIENT]:
+        usuarios = usuarios.filter(role=role_filter)
+
+    if status_filter == 'active':
+        usuarios = usuarios.filter(is_active=True)
+    elif status_filter == 'inactive':
+        usuarios = usuarios.filter(is_active=False)
+
     return render(request, 'users.html', {
         'usuarios': usuarios,
-        'user': request.user
+        'user': request.user,
+        'filters': {
+            'username': username_filter,
+            'role': role_filter,
+            'status': status_filter,
+        },
+        'results_count': usuarios.count(),
     })
 
 
@@ -150,15 +181,35 @@ def coaches_list(request):
     if request.user.role != User.Roles.ADMIN:
         return redirect('dashboard')
 
+    name_filter = request.GET.get('name', '').strip()
+    status_filter = request.GET.get('status', '')
+
     coaches = User.objects.filter(
         role=User.Roles.COACH
     ).order_by('username')
+
+    if name_filter:
+        coaches = coaches.filter(
+            Q(username__icontains=name_filter) |
+            Q(first_name__icontains=name_filter) |
+            Q(last_name__icontains=name_filter)
+        )
+
+    if status_filter == 'active':
+        coaches = coaches.filter(is_active=True)
+    elif status_filter == 'inactive':
+        coaches = coaches.filter(is_active=False)
 
     return render(
         request,
         'coaches.html',
         {
-            'coaches': coaches
+            'coaches': coaches,
+            'filters': {
+                'name': name_filter,
+                'status': status_filter,
+            },
+            'results_count': coaches.count(),
         }
     )
 
