@@ -19,7 +19,7 @@ Usuarios
 </div>
 
 <form method="get" action="{% url 'users' %}" class="filter-bar">
-    <input type="text" name="username" value="{{ filters.username|default:'' }}" placeholder="Buscar usuario">
+    <input type="text" name="username" value="{{ filters.username|default:'' }}" placeholder="Buscar por usuario, nombre o email">
     <select name="role">
         <option value="">Rol</option>
         <option value="ADMIN" {% if filters.role == 'ADMIN' %}selected{% endif %}>Administrador</option>
@@ -34,6 +34,7 @@ Usuarios
     <button type="submit" class="btn-filtrar">FILTRAR</button>
     <a href="{% url 'users' %}" class="btn-limpiar">✕</a>
 </form>
+<p class="results-count">{{ usuarios|length }} resultado{% if usuarios|length != 1 %}s{% endif %} encontrado{% if usuarios|length != 1 %}s{% endif %}</p>
 
 <div class="table-card">
     <table>
@@ -47,77 +48,56 @@ Usuarios
                 <th>Acciones</th>
             </tr>
         </thead>
-
         <tbody>
-
             {% for usuario in usuarios %}
-
             <tr>
-
                 <td>
                     <p class="class-name">{{ usuario.username }}</p>
                     <p class="class-desc">{{ usuario.email }}</p>
                 </td>
-
-                <td>
-                    {{ usuario.get_full_name|default:"—" }}
-                </td>
-
+                <td>{{ usuario.get_full_name|default:"—" }}</td>
                 <td>
                     {% if usuario.role == 'ADMIN' %}
-                    <span class="badge badge-danger">
-                        Administrador
-                    </span>
-
+                    <span class="badge badge-danger">Administrador</span>
                     {% elif usuario.role == 'COACH' %}
-                    <span class="badge badge-intermediate">
-                        Entrenador
-                    </span>
-
+                    <span class="badge badge-intermediate">Entrenador</span>
                     {% else %}
-                    <span class="badge badge-active">
-                        Cliente
-                    </span>
+                    <span class="badge badge-active">Cliente</span>
                     {% endif %}
                 </td>
-
-                <td>
-                    {{ usuario.phone|default:"—" }}
-                </td>
-
+                <td>{{ usuario.phone|default:"—" }}</td>
                 <td>
                     {% if usuario.is_active %}
-                    <span class="badge badge-active">
-                        Activo
-                    </span>
+                    <span class="badge badge-active">Activo</span>
                     {% else %}
-                    <span class="badge badge-inactive">
-                        Inactivo
-                    </span>
+                    <span class="badge badge-inactive">Inactivo</span>
                     {% endif %}
                 </td>
-
                 <td>
                     {% if usuario.pk != user.pk %}
-                    <a href="{% url 'user_toggle' usuario.pk %}"
-                       class="btn-toggle">
-
-                        {% if usuario.is_active %}
-                        Desactivar
-                        {% else %}
-                        Activar
-                        {% endif %}
-
-                    </a>
+                    <div class="action-buttons">
+                        <a href="{% url 'user_toggle' usuario.pk %}" class="btn-action {% if usuario.is_active %}btn-action-toggle{% else %}btn-action-edit{% endif %}">
+                            {% if usuario.is_active %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                            Desactivar
+                            {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Activar
+                            {% endif %}
+                        </a>
+                    </div>
                     {% else %}
                     <span style="color: #2A2A2A">—</span>
                     {% endif %}
                 </td>
-
             </tr>
-
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; color:#555; padding: 40px 16px;">
+                    No se encontraron usuarios con esos filtros.
+                </td>
+            </tr>
             {% endfor %}
-
         </tbody>
     </table>
 </div>

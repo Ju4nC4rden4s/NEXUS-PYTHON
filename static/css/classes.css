@@ -1,9 +1,15 @@
+/* ───────────────────────────────────────────
+   LAYOUT & TOPBAR
+─────────────────────────────────────────── */
 .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+/* ───────────────────────────────────────────
+   BUTTONS — BASE
+─────────────────────────────────────────── */
 .btn-red {
     background: #C0152A;
     color: #fff;
@@ -40,18 +46,143 @@
     color: #F0F0F0;
 }
 
-.btn-toggle {
-    font-size: 12px;
-    color: #888;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
+/* ───────────────────────────────────────────
+   ACTION BUTTONS (Editar / Desactivar / Eliminar)
+─────────────────────────────────────────── */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.btn-toggle:hover {
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Editar — neutro con borde */
+.btn-action-edit {
+    background: #1A1A1A;
+    border-color: #2A2A2A;
+    color: #AAAAAA;
+}
+
+.btn-action-edit:hover {
+    background: #242424;
+    border-color: #3A3A3A;
+    color: #F0F0F0;
+}
+
+/* Desactivar / Activar — amarillo apagado */
+.btn-action-toggle {
+    background: #1C1800;
+    border-color: #3A3000;
+    color: #C8991A;
+}
+
+.btn-action-toggle:hover {
+    background: #252200;
+    border-color: #504500;
+    color: #F0B429;
+}
+
+/* Eliminar — rojo */
+.btn-action-delete {
+    background: #1E0507;
+    border-color: #3A0810;
     color: #C0152A;
 }
 
+.btn-action-delete:hover {
+    background: #2A070C;
+    border-color: #5A1020;
+    color: #E8253A;
+}
+
+/* ───────────────────────────────────────────
+   FILTER BAR
+─────────────────────────────────────────── */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0 8px;
+}
+
+.filter-bar input,
+.filter-bar select {
+    background: #111;
+    border: 1px solid #2A2A2A;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #F0F0F0;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus {
+    border-color: #C0152A;
+}
+
+.filter-bar input::placeholder {
+    color: #555;
+}
+
+.btn-filtrar {
+    background: #C0152A;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-filtrar:hover {
+    background: #A01020;
+}
+
+.btn-limpiar {
+    color: #555;
+    font-size: 16px;
+    text-decoration: none;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.btn-limpiar:hover {
+    color: #C0152A;
+}
+
+.results-count {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+/* ───────────────────────────────────────────
+   FORM CARD (nueva clase)
+─────────────────────────────────────────── */
 .form-card {
     background: #111;
     border: 1px solid #1E1E1E;
@@ -100,6 +231,7 @@
     font-family: 'Inter', sans-serif;
     outline: none;
     transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -120,6 +252,9 @@
     margin-top: 8px;
 }
 
+/* ───────────────────────────────────────────
+   TABLE
+─────────────────────────────────────────── */
 .table-card {
     background: #111;
     border: 1px solid #1E1E1E;
@@ -149,6 +284,7 @@ tbody td {
     font-size: 13px;
     color: #888;
     border-bottom: 1px solid #1E1E1E;
+    vertical-align: middle;
 }
 
 tbody tr:last-child td {
@@ -177,21 +313,33 @@ tbody tr:hover {
 .class-desc {
     font-size: 12px;
     color: #555;
+    margin: 0;
 }
 
+/* ───────────────────────────────────────────
+   BADGES
+─────────────────────────────────────────── */
 .badge {
+    display: inline-block;
     padding: 3px 10px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
+    letter-spacing: 0.03em;
 }
 
-.badge-active { background: #0A2A15; color: #27AE60; }
-.badge-inactive { background: #1E1E1E; color: #555; }
-.badge-beginner { background: #0A2A15; color: #27AE60; }
-.badge-intermediate { background: #1A1A0A; color: #F39C12; }
-.badge-advanced { background: #2A0509; color: #C0152A; }
+/* Estado */
+.badge-active   { background: #0A2A15; color: #27AE60; }
+.badge-inactive { background: #1E1E1E; color: #555555; }
 
+/* Nivel — estas clases las genera Django con clase.level|lower */
+.badge-beginner     { background: #0A2A15; color: #27AE60; }
+.badge-intermediate { background: #1F1800; color: #E09E1A; }
+.badge-advanced     { background: #2A0509; color: #C0152A; }
+
+/* ───────────────────────────────────────────
+   EMPTY STATE
+─────────────────────────────────────────── */
 .empty {
     text-align: center;
     padding: 60px 20px;
@@ -201,11 +349,10 @@ tbody tr:hover {
     align-items: center;
     gap: 16px;
 }
-.btn-danger {
-    color: #C0152A !important;
-}
 
-/* Modal reservas */
+/* ───────────────────────────────────────────
+   MODALS
+─────────────────────────────────────────── */
 .modal {
     position: fixed;
     inset: 0;
@@ -218,10 +365,12 @@ tbody tr:hover {
     transition: opacity 0.2s ease;
     z-index: 30;
 }
+
 .modal.visible {
     opacity: 1;
     pointer-events: auto;
 }
+
 .modal-content {
     background: #111;
     border: 1px solid #1E1E1E;
@@ -232,6 +381,7 @@ tbody tr:hover {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
     position: relative;
 }
+
 .modal-close {
     position: absolute;
     top: 16px;
@@ -242,18 +392,22 @@ tbody tr:hover {
     font-size: 22px;
     cursor: pointer;
 }
+
 .modal h2 {
     margin-bottom: 12px;
 }
+
 .modal .form-group {
     margin-top: 18px;
 }
+
 .modal .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     margin-top: 22px;
 }
+
 .modal select {
     width: 100%;
     background: #0A0A0A;
@@ -261,7 +415,9 @@ tbody tr:hover {
     border: 1px solid #1E1E1E;
     border-radius: 10px;
     padding: 12px;
+    box-sizing: border-box;
 }
+
 .modal label {
     display: block;
     margin-bottom: 8px;
@@ -269,6 +425,7 @@ tbody tr:hover {
     font-size: 13px;
 }
 
+/* Detail modal */
 .detail-modal-content {
     max-width: 720px;
     width: min(720px, 100%);
@@ -352,18 +509,14 @@ tbody tr:hover {
     min-height: 22px;
 }
 
-.detail-message.success {
-    color: #27AE60;
-}
-
-.detail-message.error {
-    color: #E74C3C;
-}
+.detail-message.success { color: #27AE60; }
+.detail-message.error   { color: #E74C3C; }
 
 .detail-no-sessions {
     color: #AAA;
 }
 
+/* Timeband badges */
 .timeband-badges {
     display: flex;
     flex-wrap: wrap;

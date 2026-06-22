@@ -1,15 +1,11 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
-=======
-from django.db.models import Q
-from django.shortcuts import render
->>>>>>> 0020f04eaf648899926771deb16bdfe8c7fb4583
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib import messages
+from django.db.models import Q
 from apps.classes.models import Class, ClassSession
 from apps.reservations.models import Reservation
 from apps.users.models import User, Coach
