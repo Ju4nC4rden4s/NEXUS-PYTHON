@@ -75,12 +75,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# config/settings.py
+
+import os  # Asegúrate de que este import esté al inicio del archivo
+
+# ...
+
+# config/settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nexus_python',           # La base de datos que creaste
+        'USER': 'postgres',            # El usuario que viste en \conninfo
+        'PASSWORD': '1234',   # La contraseña del usuario postgres
+        'HOST': 'localhost',           # O la ruta del socket que viste
+        'PORT': '5432',                # El puerto que viste
     }
 }
+
+# ...
 
 
 # Password validation
@@ -126,3 +140,4 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+

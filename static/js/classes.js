@@ -53,22 +53,22 @@
 
     function getTimebandFromHour(hour) {
         if (hour >= 6 && hour < 12) {
-            return '🌅 Mañana';
+            return 'Mañana';
         }
         if (hour >= 12 && hour < 18) {
-            return '☀️ Tarde';
+            return 'Tarde';
         }
         if (hour >= 18 && hour < 24) {
-            return '🌙 Noche';
+            return 'Noche';
         }
-        return '🌙 Noche';
+        return 'Noche';
     }
 
     function getTimebandEmoji(value) {
         const date = new Date(value);
         const hour = isNaN(date.getTime()) ? Number(value.slice(11, 13)) : date.getHours();
-        if (hour >= 6 && hour < 12) return '🌅';
-        if (hour >= 12 && hour < 18) return '☀️';
+        if (hour >= 6 && hour < 12) return '';
+        if (hour >= 12 && hour < 18) return '';
         return '🌙';
     }
 

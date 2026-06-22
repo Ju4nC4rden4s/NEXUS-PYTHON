@@ -536,3 +536,55 @@ tbody tr:hover {
     color: #F0F0F0;
     font-size: 14px;
 }
+
+/* static/css/classes.css */
+
+/* ... (tus estilos existentes) ... */
+
+/* ============================================
+   BOTÓN DE EXPORTAR EXCEL
+   ============================================ */
+
+.btn-export-excel {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    height: 38px;
+    align-self: center;
+}
+
+.btn-export-excel:hover {
+    background-color: #218838;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-export-excel:active {
+    transform: translateY(0);
+}
+
+/* Si quieres una versión más pequeña */
+.btn-export-excel-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    height: 32px;
+}
+
+/* Si quieres una versión más grande */
+.btn-export-excel-lg {
+    padding: 10px 24px;
+    font-size: 16px;
+    height: 44px;
+}

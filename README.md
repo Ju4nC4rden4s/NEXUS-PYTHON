@@ -43,7 +43,7 @@ python manage.py shell
 Dentro de la shell:
 ```python
 from apps.users.models import User
-u = User.objects.get(username='sebas ')
+u = User.objects.get(username='admin123')
 u.role = 'ADMIN'
 u.save()
 exit()
@@ -85,3 +85,60 @@ Abre el navegador en `http://127.0.0.1:8000/`
 - **Clases** — gestión de clases con niveles y estado
 - **Sesiones** — programación de sesiones con coach y capacidad máxima de 8 personas
 - **Reservas** — reserva de cupos en sesiones con validaciones de negocio
+
+## CREAR BD
+
+1. ESTRUCTURA DE DATABASES EN CONFIG/SETTINGS.PY
+
+# config/settings.py
+
+import os  # Asegúrate de que este import esté al inicio del archivo
+
+# ...
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nombre_de_tu_bd',        # Ejemplo: 'nexus_db'
+        'USER': 'tu_usuario_postgres',     # Ejemplo: 'postgres'
+        'PASSWORD': 'tu_contraseña',
+        'HOST': 'localhost',               # O la IP de tu servidor
+        'PORT': '5432',                    # Puerto por defecto de PostgreSQL
+    }
+}
+
+2. SI NO SE SABEN LOS DATOS EJECUTAR ESTO EN TERMINAL
+
+1 - sudo -i -u postgres
+2 - psql
+3 - \conninfo
+4 - ALTER USER postgres WITH PASSWORD 'nueva_contraseña'; (si no recuerdan la contraseña)
+
+## Con el entorno virtual activado ejecutar
+
+1 - pip install psycopg2-binary
+2 - python manage.py makemigrations
+3 - python manage.py migrate
+
+## CREAR SUPERUSUARIO
+
+python manage.py createsuperuser
+
+## ASIGNAR ROL ADMIN
+
+python manage.py shell
+
+Dentro de la shell:
+  python
+from apps.users.models import User
+u = User.objects.get(username='admin123')
+u.role = 'ADMIN'
+u.save()
+exit()
+
+## EXCEL
+
+Instalar dependencia
+
+pip install openpyxl
+
