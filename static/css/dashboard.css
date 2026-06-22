@@ -176,3 +176,49 @@ form button.logout {
 form button.logout:hover {
     color: #A01020;
 }
+
+/* Filter bar */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.filter-bar input,
+.filter-bar select {
+    background: #111;
+    border: 1px solid #2A2A2A;
+    color: #F0F0F0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    height: 42px;
+    flex: 1;
+    min-width: 140px;
+}
+.btn-filtrar {
+    background: #C0152A;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0 24px;
+    height: 42px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+.btn-limpiar {
+    color: #555;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 0 8px;
+    line-height: 42px;
+}
+.btn-limpiar:hover {
+    color: #F0F0F0;
+}
