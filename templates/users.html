@@ -18,6 +18,23 @@ Usuarios
     </div>
 </div>
 
+<form method="get" action="{% url 'users' %}" class="filter-bar">
+    <input type="text" name="username" value="{{ filters.username|default:'' }}" placeholder="Buscar usuario">
+    <select name="role">
+        <option value="">Rol</option>
+        <option value="ADMIN" {% if filters.role == 'ADMIN' %}selected{% endif %}>Administrador</option>
+        <option value="COACH" {% if filters.role == 'COACH' %}selected{% endif %}>Entrenador</option>
+        <option value="CLIENT" {% if filters.role == 'CLIENT' %}selected{% endif %}>Cliente</option>
+    </select>
+    <select name="status">
+        <option value="">Estado</option>
+        <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Activo</option>
+        <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactivo</option>
+    </select>
+    <button type="submit" class="btn-filtrar">FILTRAR</button>
+    <a href="{% url 'users' %}" class="btn-limpiar">✕</a>
+</form>
+
 <div class="table-card">
     <table>
         <thead>

@@ -24,6 +24,24 @@ Clases
     {% endif %}
 </div>
 
+<form method="get" action="{% url 'classes' %}" class="filter-bar">
+    <input type="text" name="name" value="{{ filters.name|default:'' }}" placeholder="Buscar clase o descripción">
+    <select name="level">
+        <option value="">Nivel</option>
+        <option value="BEGINNER" {% if filters.level == 'BEGINNER' %}selected{% endif %}>Principiante</option>
+        <option value="INTERMEDIATE" {% if filters.level == 'INTERMEDIATE' %}selected{% endif %}>Intermedio</option>
+        <option value="ADVANCED" {% if filters.level == 'ADVANCED' %}selected{% endif %}>Avanzado</option>
+    </select>
+    <select name="status">
+        <option value="">Estado</option>
+        <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Activo</option>
+        <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactivo</option>
+    </select>
+    <button type="submit" class="btn-filtrar">FILTRAR</button>
+    <a href="{% url 'classes' %}" class="btn-limpiar">✕</a>
+</form>
+<p class="results-count">{{ results_count }} resultados encontrados</p>
+
 {% if show_form %}
 <div class="form-card">
     <h2>Nueva clase</h2>
@@ -34,27 +52,17 @@ Clases
         <div class="form-row">
             <div class="form-group">
                 <label>Nombre</label>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Ej: Muay Thai"
-                    required>
+                <input type="text" name="name" placeholder="Ej: Muay Thai" required>
             </div>
-
             <div class="form-group">
                 <label>Duración (minutos)</label>
-                <input
-                    type="number"
-                    name="duration_minutes"
-                    placeholder="60"
-                    required>
+                <input type="number" name="duration_minutes" placeholder="60" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>Nivel</label>
-
                 <select name="level">
                     <option value="BEGINNER">Principiante</option>
                     <option value="INTERMEDIATE">Intermedio</option>
@@ -65,21 +73,12 @@ Clases
 
         <div class="form-group">
             <label>Descripción</label>
-
-            <textarea
-                name="description"
-                placeholder="Descripción de la clase..."
-                rows="3"></textarea>
+            <textarea name="description" placeholder="Descripción de la clase..." rows="3"></textarea>
         </div>
 
         <div class="form-actions">
-            <a href="{% url 'classes' %}" class="btn-outline">
-                Cancelar
-            </a>
-
-            <button type="submit" class="btn-red">
-                Guardar
-            </button>
+            <a href="{% url 'classes' %}" class="btn-outline">Cancelar</a>
+            <button type="submit" class="btn-red">Guardar</button>
         </div>
     </form>
 </div>
@@ -88,114 +87,129 @@ Clases
 {% if clases %}
 
 <div class="table-card">
-
     <table>
-
         <thead>
             <tr>
                 <th>Nombre</th>
                 <th>Nivel</th>
                 <th>Duración</th>
                 <th>Estado</th>
-
                 {% if user.role == 'ADMIN' %}
                 <th>Acciones</th>
                 {% endif %}
+                {% if user.role == 'CLIENT' %}
+                <th>Acción</th>
+                {% endif %}
             </tr>
         </thead>
-
         <tbody>
-
             {% for clase in clases %}
-
             <tr>
-
                 <td>
-                    <p class="class-name">
-                        {{ clase.name }}
-                    </p>
-
-                    <p class="class-desc">
-                        {{ clase.description|truncatechars:60 }}
-                    </p>
+                    <p class="class-name class-detail-toggle" data-class-id="{{ clase.pk }}" data-class-description="{{ clase.description|escapejs }}" data-class-duration="{{ clase.duration_minutes }}" data-class-level="{{ clase.level }}" data-class-level-display="{{ clase.get_level_display }}">{{ clase.name }}</p>
+                    <p class="class-desc">{{ clase.description|truncatechars:60 }}</p>
                 </td>
-
                 <td>
-                    <span class="badge badge-{{ clase.level|lower }}">
-                        {{ clase.get_level_display }}
-                    </span>
+                    <span class="badge badge-{{ clase.level|lower }}">{{ clase.get_level_display }}</span>
                 </td>
-
-                <td>
-                    {{ clase.duration_minutes }} min
-                </td>
-
+                <td>{{ clase.duration_minutes }} min</td>
                 <td>
                     {% if clase.is_active %}
-                    <span class="badge badge-active">
-                        Activa
-                    </span>
+                    <span class="badge badge-active">Activa</span>
                     {% else %}
-                    <span class="badge badge-inactive">
-                        Inactiva
-                    </span>
+                    <span class="badge badge-inactive">Inactiva</span>
                     {% endif %}
                 </td>
-
                 {% if user.role == 'ADMIN' %}
                 <td>
-
-                    <a href="{% url 'class_edit' clase.pk %}"
-                       class="btn-toggle">
-                        Editar
+                    <a href="{% url 'class_edit' clase.pk %}" class="btn-toggle">Editar</a>
+                    <a href="{% url 'class_toggle' clase.pk %}" class="btn-toggle">
+                        {% if clase.is_active %}Desactivar{% else %}Activar{% endif %}
                     </a>
-
-                    <a href="{% url 'class_toggle' clase.pk %}"
-                       class="btn-toggle">
-
-                        {% if clase.is_active %}
-                        Desactivar
-                        {% else %}
-                        Activar
-                        {% endif %}
-
-                    </a>
-
-                    <a href="{% url 'class_delete' clase.pk %}"
-                       class="btn-toggle btn-danger"
-                       onclick="return confirm('¿Seguro que quieres eliminar esta clase?')">
-
-                        Eliminar
-
-                    </a>
-
+                    <a href="{% url 'class_delete' clase.pk %}" class="btn-toggle btn-danger" onclick="return confirm('¿Seguro que quieres eliminar esta clase?')">Eliminar</a>
                 </td>
                 {% endif %}
-
+                {% if user.role == 'CLIENT' %}
+                <td>
+                    {% if clase.pk in available_class_ids %}
+                    <button type="button" class="btn-red btn-reserve-class" data-class-id="{{ clase.pk }}" data-class-name="{{ clase.name|escapejs }}">Reservar</button>
+                    <div class="timeband-badges" data-class-id="{{ clase.pk }}"></div>
+                    {% else %}
+                    <button type="button" class="btn-toggle" disabled>Sin sesiones disponibles</button>
+                    {% endif %}
+                </td>
+                {% endif %}
             </tr>
-
             {% endfor %}
-
         </tbody>
-
     </table>
-
 </div>
+
+{% if user.role == 'CLIENT' %}
+<div id="reserveModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+        <button type="button" class="modal-close" id="modalClose">×</button>
+        <h2>Reservar sesión</h2>
+        <p id="modalClassName" style="color:#AAA; margin-bottom:18px;"></p>
+
+        <form method="post" action="{% url 'reservation_create' %}" id="reserveForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="modalSessionSelect">Sesiones disponibles</label>
+                <select id="modalSessionSelect" name="session" required>
+                    <option value="">Selecciona una sesión</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-outline" id="modalCancel">Cancelar</button>
+                <button type="submit" class="btn-red">Confirmar reserva</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="classDetailModal" class="modal" aria-hidden="true">
+    <div class="modal-content detail-modal-content">
+        <button type="button" class="modal-close" id="detailModalClose">×</button>
+        <div class="detail-modal-header">
+            <div>
+                <h2 id="detailClassName"></h2>
+                <span id="detailClassBadge" class="badge badge-advanced"></span>
+            </div>
+            <p id="detailDuration" class="detail-duration"></p>
+        </div>
+        <p id="detailDescription" class="detail-description"></p>
+
+        <div class="detail-section">
+            <h3>Sesiones disponibles</h3>
+            <div id="detailSessionsList" class="detail-sessions-list"></div>
+        </div>
+
+        <div id="detailMessage" class="detail-message"></div>
+    </div>
+</div>
+{% endif %}
 
 {% else %}
 
 <div class="empty">
-
     <p>No hay clases registradas aún.</p>
-
     {% if user.role == 'ADMIN' %}
-    <a href="{% url 'class_create' %}" class="btn-red">
-        + Crear primera clase
-    </a>
+    <a href="{% url 'class_create' %}" class="btn-red">+ Crear primera clase</a>
     {% endif %}
-
 </div>
 
 {% endif %}
 
+{% if user.role == 'CLIENT' %}
+<script id="sessions-data" type="application/json">{{ available_sessions_json|safe }}</script>
+<script id="available-sessions-by-class-data" type="application/json">{{ available_sessions_by_class_json|safe }}</script>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% if user.role == 'CLIENT' %}
+<script src="{% static 'js/classes.js' %}"></script>
+{% endif %}
 {% endblock %}

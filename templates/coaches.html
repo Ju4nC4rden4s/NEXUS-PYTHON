@@ -22,6 +22,18 @@ Entrenadores
     </a>
 </div>
 
+<form method="get" action="{% url 'coaches' %}" class="filter-bar">
+    <input type="text" name="name" value="{{ filters.name|default:'' }}" placeholder="Buscar entrenador">
+    <select name="status">
+        <option value="">Estado</option>
+        <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Activo</option>
+        <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactivo</option>
+    </select>
+    <button type="submit" class="btn-filtrar">FILTRAR</button>
+    <a href="{% url 'coaches' %}" class="btn-limpiar">✕</a>
+</form>
+<p class="results-count">{{ results_count }} resultados encontrados</p>
+
 {% if messages %}
     {% for message in messages %}
     <div class="alert alert-{{ message.tags }}">

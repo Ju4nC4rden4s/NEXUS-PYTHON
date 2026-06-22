@@ -19,11 +19,39 @@ Sesiones
     </div>
 
     {% if user.role == 'ADMIN' %}
-    <a href="{% url 'session_create' %}" class="btn-red">
-        + Nueva sesión
-    </a>
+    <a href="{% url 'sessions' %}?new=1" class="btn-red">+ Nueva sesión</a>
     {% endif %}
 </div>
+
+<form method="get" action="{% url 'sessions' %}" class="filter-bar">
+    <select name="class_id">
+        <option value="">Clase</option>
+        {% for clase in clases %}
+        <option value="{{ clase.pk }}" {% if filters.class_id == clase.pk|stringformat:"s" %}selected{% endif %}>{{ clase.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="coach">
+        <option value="">Entrenador</option>
+        {% for coach in coaches %}
+        <option value="{{ coach.pk }}" {% if filters.coach == coach.pk|stringformat:"s" %}selected{% endif %}>{{ coach.get_full_name|default:coach.username }}</option>
+        {% endfor %}
+    </select>
+    <select name="status">
+        <option value="">Estado</option>
+        <option value="SCHEDULED" {% if filters.status == 'SCHEDULED' %}selected{% endif %}>Programada</option>
+        <option value="CANCELLED" {% if filters.status == 'CANCELLED' %}selected{% endif %}>Cancelada</option>
+        <option value="COMPLETED" {% if filters.status == 'COMPLETED' %}selected{% endif %}>Completada</option>
+    </select>
+    <input type="date" name="date_from" value="{{ filters.date_from|default:'' }}">
+    <input type="date" name="date_to" value="{{ filters.date_to|default:'' }}">
+    <label style="display:flex; align-items:center; gap:8px; margin:0;">
+        <input type="checkbox" name="has_spots" value="1" {% if filters.has_spots %}checked{% endif %}>
+        Solo cupos
+    </label>
+    <button type="submit" class="btn-filtrar">FILTRAR</button>
+    <a href="{% url 'sessions' %}" class="btn-limpiar">✕</a>
+</form>
+<p class="results-count">{{ results_count }} resultados encontrados</p>
 
 {% if show_form %}
 

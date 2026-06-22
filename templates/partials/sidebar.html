@@ -17,10 +17,12 @@
             Clases
         </a>
 
+        {% if user.role == 'ADMIN' or user.role == 'COACH' %}
         <a href="{% url 'sessions' %}"
            class="nav-item {% if request.resolver_match.url_name == 'sessions' or request.resolver_match.url_name == 'session_create' %}active{% endif %}">
             Sesiones
         </a>
+        {% endif %}
 
         <a href="{% url 'reservations' %}"
            class="nav-item {% if request.resolver_match.url_name == 'reservations' or request.resolver_match.url_name == 'reservation_create' %}active{% endif %}">
