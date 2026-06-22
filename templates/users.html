@@ -16,6 +16,14 @@ Usuarios
         <h1>Usuarios</h1>
         <p>Gestión de usuarios del sistema</p>
     </div>
+    
+    <!-- ✅ CORREGIDO: Sin namespace -->
+    {% if user.role == 'ADMIN' %}
+    <a href="{% url 'exportar_usuarios_excel' %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}" 
+       class="btn-export-excel">
+        📊 Exportar Excel
+    </a>
+    {% endif %}
 </div>
 
 <form method="get" action="{% url 'users' %}" class="filter-bar">
