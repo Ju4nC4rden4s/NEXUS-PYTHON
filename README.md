@@ -43,7 +43,7 @@ python manage.py shell
 Dentro de la shell:
 ```python
 from apps.users.models import User
-u = User.objects.get(username='tu_usuario')
+u = User.objects.get(username='sebas ')
 u.role = 'ADMIN'
 u.save()
 exit()

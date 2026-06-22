@@ -1,40 +1,641 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS — Login</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión — NEXUS MMA</title>
+  <meta name="description" content="Accede a tu panel de gestión NEXUS MMA." />
+  <link rel="stylesheet" href="{% static 'css/Login.css' %}" />
+  <link rel="icon" type="image/svg+xml" href="/icons/nexus-icon.svg" th:href="@{/icons/nexus-icon.svg}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ===== TOAST DE NOTIFICACIONES ===== */
+    #toast {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.1rem;
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      max-width: 360px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #toast.toast-error   { background: #fdf2f2; color: #991b1b; border-left: 4px solid #e63946; }
+    #toast.toast-success { background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; }
+    #toast.toast-info    { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+    #toast.toast-warn    { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+
+    /* ===== MODAL ADMIN ===== */
+    .admin-modal .input-group {
+      margin-bottom: 1.2rem;
+    }
+    .admin-modal .input-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-primary, #222);
+    }
+    .admin-modal .input-field {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--border-color, #ccc);
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      transition: border 0.2s;
+    }
+    .admin-modal .input-field:focus {
+      border-color: var(--red, #e63946);
+      outline: none;
+    }
+    .admin-options {
+      display: flex;
+      align-items: center;
+      margin: 0.5rem 0 1.2rem;
+    }
+    .admin-options .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary, #555);
+    }
+    .admin-login-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--red, #e63946);
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .admin-login-btn:hover {
+      background: #c1121f;
+    }
+    .admin-register-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.2rem 0 0.8rem;
+      color: var(--text-muted, #888);
+      font-size: 0.85rem;
+    }
+    .admin-register-divider::before,
+    .admin-register-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color, #ddd);
+    }
+    .admin-register-btn {
+      width: 100%;
+      padding: 0.7rem;
+      background: transparent;
+      border: 2px solid var(--red, #e63946);
+      border-radius: 2rem;
+      color: var(--red, #e63946);
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-register-btn:hover {
+      background: var(--red, #e63946);
+      color: #fff;
+    }
+    .admin-demo-info {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+    }
+    .admin-demo-info i {
+      margin-right: 0.3rem;
+    }
+    .admin-access .admin-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: transparent;
+      border: 1px solid var(--border-color, #ddd);
+      border-radius: 2rem;
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary, #222);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0.5rem 0 1rem;
+    }
+    .admin-access .admin-btn:hover {
+      border-color: var(--red, #e63946);
+      color: var(--red, #e63946);
+    }
+    .admin-access .admin-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .register-section {
+      margin-top: 1.5rem;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-muted, #888);
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color, #ddd);
+    }
+    .register-btn {
+      width: 100%;
+      padding: 0.7rem;
+      background: transparent;
+      border: 2px solid var(--red, #e63946);
+      border-radius: 2rem;
+      color: var(--red, #e63946);
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .register-btn:hover {
+      background: var(--red, #e63946);
+      color: #fff;
+    }
+    .info-note {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+      text-align: center;
+    }
+    .info-note i {
+      margin-right: 0.3rem;
+    }
+    .admin-modal__content {
+      max-width: 420px;
+      width: 90%;
+    }
+
+    /* ===== INDICADOR DE CARGA EN BOTÓN ===== */
+    .btn-login .btn-loader {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-login.loading .btn-text   { display: none; }
+    .btn-login.loading .btn-loader { display: flex; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="login-box">
-            <div class="logo">
-                NE<span>✕</span>US
-                <p>MMA</p>
-            </div>
 
-            {% if form.errors %}
-            <div class="alert">
-                Usuario o contraseña incorrectos.
-            </div>
-            {% endif %}
+<!-- ===== TOAST ===== -->
+<!--
+  Se muestra en lugar de alert(). Se inyecta por JS según los
+  parámetros de la URL que devuelve Spring Security.
+-->
+<div id="toast" role="alert" aria-live="polite"></div>
 
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_username">Usuario</label>
-                    <input type="text" name="username" id="id_username" placeholder="Tu usuario" required>
-                </div>
-                <div class="form-group">
-                    <label for="id_password">Contraseña</label>
-                    <input type="password" name="password" id="id_password" placeholder="Tu contraseña" required>
-                </div>
-                <button type="submit">Ingresar</button>
-            </form>
-        </div>
+<!-- ===== MODAL ADMIN ===== -->
+<div class="admin-modal" id="adminModal">
+  <div class="admin-modal__overlay"></div>
+  <div class="admin-modal__content">
+    <button class="modal-close" id="closeAdminModal" aria-label="Cerrar modal">&times;</button>
+    <div class="admin-modal__header">
+      <div class="admin-badge">PANEL ADMINISTRATIVO</div>
+      <h2>CONTROL TOTAL<br />DEL GIMNASIO</h2>
+      <p>Acceso exclusivo para propietarios, administradores y personal autorizado.</p>
     </div>
+
+    <!--
+      CORRECCIÓN: Se eliminó <input type="hidden" name="expectedRole" ...>
+      La autenticación se procesa desde Django y el modal admin solo
+      acepta usuarios con rol ADMIN.
+    -->
+    <form class="admin-form" id="adminLoginForm" action="/admin-login/" method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="admin_documento">Documento de administrador</label>
+        <div class="input-wrap">
+          <input
+            type="text"
+            name="username"
+            id="admin_documento"
+            placeholder="123456789"
+            autocomplete="username"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="admin_password">Contraseña</label>
+        <div class="input-wrap">
+          <input
+            type="password"
+            name="password"
+            id="admin_password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+          <!-- Botón mostrar/ocultar contraseña para el modal -->
+          <button type="button" class="toggle-pass" id="toggleAdminPass" aria-label="Mostrar contraseña">
+            <svg id="eyeIconAdmin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-options">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" name="remember-me" id="admin_remember" />
+          <span>Recordar credenciales</span>
+        </label>
+      </div>
+
+      <button class="admin-login-btn" type="submit">
+        <i class="fas fa-sign-in-alt"></i> Ingresar al panel
+      </button>
+    </form>
+
+    <div class="admin-register-divider">
+      <span>¿Eres dueño de un gimnasio?</span>
+    </div>
+    <a id="adminRegisterBtn" class="admin-register-btn" href="{% url 'register_admin' %}">
+      <i class="fas fa-building"></i> Registrar mi gimnasio
+    </a>
+
+    <div class="admin-demo-info">
+      <i class="fas fa-info-circle"></i> Demo: admin / admin123
+    </div>
+  </div>
+</div>
+
+<!-- ===== PÁGINA PRINCIPAL ===== -->
+<div class="login-wrapper">
+
+  <!-- PANEL IZQUIERDO -->
+  <div class="login-panel">
+    <div class="panel-line"></div>
+    <div class="panel-logo">
+      <a href="{% url 'home' %}" class="logo-text">
+        NE<span class="x">&#x2715;</span>US
+        <span class="mma-sub">&#8212; MMA</span>
+      </a>
+    </div>
+
+    <div class="panel-center">
+      <div class="panel-eyebrow">
+        <div class="dot"></div>
+        <span>Software de gestión · MMA</span>
+      </div>
+      <h2 class="panel-headline">
+        TU GIM.<br />
+        <span class="accent">BAJO</span><br />
+        <span class="outline">CONTROL.</span>
+      </h2>
+      <p class="panel-sub">
+        Agendamiento automático, asistencia en tiempo real y
+        <strong>cero papeleo.</strong> Todo lo que tu gimnasio necesita,
+        en un solo panel.
+      </p>
+      <div class="panel-stats">
+        <div class="pstat">
+          <div class="pstat__val">84</div>
+          <div class="pstat__key">Estudiantes activos</div>
+        </div>
+        <div class="pstat-divider"></div>
+        <div class="pstat">
+          <div class="pstat__val"><span class="red">12</span></div>
+          <div class="pstat__key">Clases hoy</div>
+        </div>
+        <div class="pstat-divider"></div>
+        <div class="pstat">
+          <div class="pstat__val">0</div>
+          <div class="pstat__key">Hrs en papeleo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-ticker">
+      <div class="panel-ticker__track">
+        <div class="panel-ticker__item"><span>Muay Thai</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>BJJ</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>MMA General</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Grappling</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Kickboxing</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Boxing</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Wrestling</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Muay Thai</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>BJJ</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>MMA General</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Grappling</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Kickboxing</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Boxing</span><div class="ticker-dot"></div></div>
+        <div class="panel-ticker__item"><span>Wrestling</span><div class="ticker-dot"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL DERECHO -->
+  <div class="login-form-panel">
+    <div class="form-container">
+
+      <div class="form-header">
+        <div class="form-header__tag">
+          <span class="red-line"></span>
+          <span>Acceso al panel</span>
+        </div>
+        <h1>BIENVENIDO<br />DE VUELTA.</h1>
+        <p>Ingresa tus credenciales para acceder a tu gimnasio.</p>
+      </div>
+
+      <!-- Botón acceso administrador -->
+      <div class="admin-access">
+        <button type="button" id="openAdminModal" class="admin-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1l9 4v6c0 5-3.5 9.5-9 11-5.5-1.5-9-6-9-11V5l9-4z"/>
+          </svg>
+          Acceso Administrador
+        </button>
+      </div>
+
+      <!--
+        CORRECCIÓN: Se eliminó <input type="hidden" name="expectedRole" ...>
+        Spring Security ignora ese campo. La redirección la hace
+        CustomSuccessHandler leyendo el rol real del Authentication object.
+      -->
+      <form id="loginForm" action="/login/" method="post">
+        {% csrf_token %}
+
+        <div class="form-group" id="group-doc">
+          <label for="documento">Documento</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m2 7 10 7 10-7"/>
+            </svg>
+            <input
+              type="text"
+              id="documento"
+              name="username"
+              placeholder="123456789"
+              autocomplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group" id="group-pass">
+          <label for="password">Contraseña</label>
+          <div class="input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar contraseña">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-wrap">
+            <input type="checkbox" name="remember-me" id="rememberCheck" />
+            <div class="checkbox-box">
+              <svg class="checkbox-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <span class="checkbox-label">Mantener sesión</span>
+          </label>
+          <a href="/auth/recuperar" class="forgot-link" id="forgotLink">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnLogin">
+          <span class="btn-text" style="display:flex;align-items:center;gap:10px;">
+            Ingresar al panel
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+          <span class="btn-loader">
+            <span class="spinner"></span>
+            Verificando...
+          </span>
+        </button>
+      </form>
+
+      <div class="register-section">
+        <div class="divider">
+          <span>¿No tienes una cuenta?</span>
+        </div>
+        <button id="registerBtn" class="register-btn">
+          <i class="fas fa-user-plus"></i> Crear cuenta nueva
+        </button>
+      </div>
+
+      <div class="info-note">
+        <i class="fas fa-pencil-alt"></i> Usuario — Ingresa y agenda tu clase
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== UTILIDAD: TOAST =====
+  // Reemplaza los alert() con notificaciones no bloqueantes.
+  function showToast(message, type = 'info', duration = 4500) {
+    const toast = document.getElementById('toast');
+    const icons = {
+      error:   '✕',
+      success: '✓',
+      info:    'ℹ',
+      warn:    '⚠'
+    };
+    toast.className = '';
+    toast.textContent = '';
+
+    const icon = document.createElement('span');
+    icon.textContent = icons[type] || 'ℹ';
+    icon.style.fontWeight = '700';
+
+    const text = document.createElement('span');
+    text.textContent = message;
+
+    toast.appendChild(icon);
+    toast.appendChild(text);
+    toast.classList.add('show', `toast-${type}`);
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, duration);
+  }
+
+  // ===== MOSTRAR/OCULTAR CONTRASEÑA — FORMULARIO USUARIO =====
+  const togglePass = document.getElementById('togglePass');
+  const eyeIcon    = document.getElementById('eyeIcon');
+  const passInput  = document.getElementById('password');
+  const eyeOpen    = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeClosed  = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+  togglePass.addEventListener('click', () => {
+    const visible = passInput.type === 'text';
+    passInput.type = visible ? 'password' : 'text';
+    eyeIcon.innerHTML = visible ? eyeOpen : eyeClosed;
+    togglePass.style.color = visible ? '' : 'var(--red, #e63946)';
+  });
+
+  // ===== MOSTRAR/OCULTAR CONTRASEÑA — MODAL ADMIN =====
+  const toggleAdminPass = document.getElementById('toggleAdminPass');
+  const eyeIconAdmin    = document.getElementById('eyeIconAdmin');
+  const adminPassInput  = document.getElementById('admin_password');
+
+  toggleAdminPass.addEventListener('click', () => {
+    const visible = adminPassInput.type === 'text';
+    adminPassInput.type = visible ? 'password' : 'text';
+    eyeIconAdmin.innerHTML = visible ? eyeOpen : eyeClosed;
+    toggleAdminPass.style.color = visible ? '' : 'var(--red, #e63946)';
+  });
+
+  // ===== MODAL ADMIN =====
+  const adminModal   = document.getElementById('adminModal');
+  const openAdminBtn = document.getElementById('openAdminModal');
+  const closeAdminBtn = document.getElementById('closeAdminModal');
+  const overlay      = document.querySelector('.admin-modal__overlay');
+
+  openAdminBtn.addEventListener('click', () => {
+    adminModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Foco accesible: mover al primer campo del modal
+    document.getElementById('admin_documento').focus();
+  });
+
+  function closeModal() {
+    adminModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  closeAdminBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && adminModal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // ===== BOTONES DE REGISTRO =====
+  document.getElementById('registerBtn').addEventListener('click', () => {
+    window.location.href = '/registro/';
+  });
+
+  document.getElementById('adminRegisterBtn').addEventListener('click', () => {
+    closeModal();
+    window.location.href = '/registro-admin/';
+  });
+
+  // ===== LEER PARÁMETROS DE URL (respuesta de Spring Security) =====
+  // Spring Security redirige a /login?error=true en credenciales incorrectas,
+  // y a /login?logout=true después de cerrar sesión.
+  // CustomSuccessHandler puede añadir ?error=role_mismatch si el rol no existe.
+  const urlParams = new URLSearchParams(window.location.search);
+  const errorParam  = urlParams.get('error');
+  const logoutParam = urlParams.get('logout');
+  const resetParam  = urlParams.get('resetExitoso');
+
+  if (errorParam === 'true') {
+    showToast('Documento o contraseña incorrectos. Verifica tus datos.', 'error');
+  } else if (errorParam === 'role_mismatch') {
+    showToast('Tu cuenta no tiene permisos para ingresar desde aquí.', 'warn');
+  } else if (logoutParam === 'true') {
+    showToast('Sesión cerrada correctamente.', 'success');
+  } else if (resetParam === 'true') {
+    showToast('Contraseña restablecida. Ya puedes iniciar sesión.', 'success');
+  }
+
+  // Limpiar parámetros de la URL sin recargar la página (historial limpio)
+  if (errorParam || logoutParam || resetParam) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // ===== VALIDACIÓN FORMULARIO USUARIO =====
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    const doc  = document.getElementById('documento').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    if (!doc || !pass) {
+      e.preventDefault();
+      showToast('Ingresa tu documento y contraseña para continuar.', 'warn');
+      return;
+    }
+    // Mostrar estado de carga en el botón
+    document.getElementById('btnLogin').classList.add('loading');
+  });
+
+  // ===== VALIDACIÓN FORMULARIO ADMIN =====
+  document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+    const doc  = document.getElementById('admin_documento').value.trim();
+    const pass = document.getElementById('admin_password').value.trim();
+    if (!doc || !pass) {
+      e.preventDefault();
+      showToast('Ingresa el documento y contraseña de administrador.', 'warn');
+    }
+  });
+</script>
+
 </body>
 </html>

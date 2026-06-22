@@ -1,0 +1,392 @@
+/* ============================================================
+   Nexus MMA — Registro de Administrador
+   Basado en el Manual de Marca v1.0
+   ============================================================ */
+
+/* ── RESET ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── TOKENS DE DISEÑO (Manual de Marca) ── */
+:root {
+  /* Colores principales */
+  --red:      #C0152A;   /* NEXUS Red · Acento principal · CTA */
+  --red-dark: #A01020;   /* Hover del rojo */
+  --red-dim:  #2A0509;   /* Fondo de badge rojo */
+  --black:    #0A0A0A;   /* Fight Black · Fondo principal */
+
+  /* Escala de grises del sistema */
+  --s100:  #111111;      /* Surface tarjetas */
+  --s150:  #1A1A1A;      /* Surface 100 */
+  --s200:  #2A2A2A;      /* Surface 200 · Bordes / hover */
+  --muted: #555555;      /* Texto secundario */
+  --subtle:#888888;      /* Placeholders */
+  --white: #F0F0F0;      /* Ring White · Texto principal */
+
+  /* Colores de estado UI */
+  --success: #27AE60;
+  --error:   #C0152A;
+  --border:  #1E1E1E;
+}
+
+/* ── BASE ── */
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px 64px;
+}
+
+/* ── LAYOUT ── */
+.page-wrap {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── LOGO ── */
+.logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-block svg {
+  display: block;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--s100);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Línea de acento roja — firma visual del sistema */
+.section-accent {
+  height: 3px;
+  width: 40px;
+  background: var(--red);
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: .04em;
+  color: var(--white);
+  line-height: 1;
+}
+
+.card-sub {
+  font-size: 13px;
+  color: var(--subtle);
+  margin-top: 6px;
+}
+
+/* ── FORM BODY ── */
+.form-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Label de sección — Barlow Condensed rojo */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+
+.section-label i {
+  font-size: 12px;
+  color: var(--red);
+}
+
+/* ── INPUTS ── */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input-row .input-group {
+  margin-bottom: 0;
+}
+
+/* Labels de campo */
+.input-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Campo de entrada — border-radius 6px */
+.input-field {
+  width: 100%;
+  background: var(--black);
+  border: 1px solid var(--s200);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--white);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.input-field::placeholder {
+  color: var(--muted);
+}
+
+.input-field:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(192, 21, 42, .15);
+}
+
+.input-field:focus-visible {
+  outline: none;
+}
+
+/* Textarea */
+textarea.input-field {
+  resize: vertical;
+  min-height: 80px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hint de campo */
+.field-hint {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+
+/* Estado de error */
+.input-field.has-error {
+  border-color: var(--error);
+}
+
+/* Mensaje de error */
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--error);
+  margin-top: 2px;
+}
+
+.error-msg i {
+  font-size: 10px;
+}
+
+/* ── CHECKBOX CUSTOM ── */
+.check-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--subtle);
+  user-select: none;
+}
+
+.check-wrapper input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--s200);
+  border-radius: 4px;
+  background: var(--black);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, border-color .15s;
+}
+
+.check-wrapper input[type="checkbox"]:checked {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.check-wrapper input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+  margin: auto;
+}
+
+.check-wrapper a {
+  color: var(--red);
+  text-decoration: none;
+}
+
+.check-wrapper a:hover {
+  text-decoration: underline;
+}
+
+/* ── SECCIÓN DE TÉRMINOS ── */
+.terms-section {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--black);
+}
+
+/* ── BOTONES ── */
+
+/* Botón primario — CTA rojo */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 48px);
+  padding: 13px 24px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s;
+  margin: 0 24px;
+}
+
+.btn-primary:hover {
+  background: var(--red-dark);
+}
+
+/* Contenedor de botones */
+.btn-actions {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Divisor con texto */
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Botón secundario */
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 24px;
+  background: transparent;
+  color: var(--subtle);
+  border: 1px solid var(--s200);
+  border-radius: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--muted);
+  color: var(--white);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  body {
+    padding: 24px 12px 48px;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .card-title {
+    font-size: 28px;
+  }
+}

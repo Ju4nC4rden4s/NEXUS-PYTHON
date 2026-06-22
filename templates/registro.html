@@ -1,0 +1,384 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Registro | NEXUS MMA</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- LOGO -->
+  <div class="logo-block">
+    <svg width="180" viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg">
+      <text x="150" y="72" font-family="'Bebas Neue',sans-serif" font-size="80"
+            fill="#F0F0F0" text-anchor="middle" letter-spacing="2">NE<tspan fill="#C0152A">&#x2715;</tspan>US</text>
+      <text x="150" y="88" font-family="'Inter',sans-serif" font-size="11"
+            fill="#555" letter-spacing="8" font-weight="600" text-anchor="middle">&#8212; MMA &#8212;</text>
+    </svg>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ✅ MENSAJES DE ERROR Y ÉXITO              -->
+  <!-- ========================================== -->
+
+  <!-- CARD PRINCIPAL -->
+  <div class="card">
+
+    <div class="card-header">
+      <div class="section-accent"></div>
+      <div class="card-title">Crear cuenta</div>
+      <div class="card-sub">Completa tus datos para comenzar</div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <form id="registerForm" action="{% url 'register' %}" method="post">
+      {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert-message alert-{{ message.tags }}">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="form-body">
+
+        <!-- Sección: Datos personales -->
+        <div class="form-section">
+          <div class="section-label">
+            <i class="fas fa-user-circle"></i>
+            Datos personales
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="input-field"
+                   placeholder="Ej: Ana María"
+                   autocomplete="given-name"
+                   minlength="2" maxlength="60"
+                   pattern="[A-Za-z&#xC0;-&#xFF; ]{2,60}" required>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" class="input-field"
+                   placeholder="Ej: García"
+                   autocomplete="family-name"
+                   minlength="2" maxlength="60"
+                   pattern="[A-Za-z&#xC0;-&#xFF; ]{2,60}" required>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label class="input-label" for="cedula">Cédula / Documento</label>
+              <input type="text" id="cedula" name="cedula" class="input-field"
+                     placeholder="Ej: 1234567890"
+                     inputmode="numeric"
+                     minlength="6" maxlength="12"
+                     pattern="[0-9]{6,12}" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="telefono">Teléfono</label>
+              <input type="tel" id="telefono" name="telefono" class="input-field"
+                     placeholder="Ej: 3001234567"
+                     inputmode="numeric"
+                     minlength="10" maxlength="10"
+                     pattern="3[0-9]{9}">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="fechaNacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento"
+                   class="input-field" required>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="direccion">
+              Dirección <span style="color:var(--muted);font-size:10px">(opcional)</span>
+            </label>
+            <input type="text" id="direccion" name="direccion" class="input-field"
+                   placeholder="Ej: Calle 10 # 20-30" maxlength="120">
+          </div>
+        </div>
+
+        <!-- Sección: Datos de cuenta -->
+        <div class="form-section">
+          <div class="section-label">
+            <i class="fas fa-lock"></i>
+            Datos de cuenta
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" class="input-field"
+                   placeholder="Ej: ana@email.com"
+                   autocomplete="email" maxlength="254"
+                   title="Ingresa un correo válido con @ y dominio" required>
+            <span class="field-hint">Ej: usuario@dominio.com</span>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label class="input-label" for="password">Contraseña</label>
+              <input type="password" id="password" name="password" class="input-field"
+                     placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                     minlength="8" maxlength="72" required>
+              <span class="field-hint">8-72 car. · Mayús, minús, número y símbolo</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="confirmarPassword">Confirmar</label>
+              <input type="password" id="confirmarPassword" name="confirmarPassword"
+                     class="input-field"
+                     placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                     required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="check-wrapper" for="showPasswordsCheck">
+              <input type="checkbox" id="showPasswordsCheck">
+              <span>Mostrar contraseñas</span>
+            </label>
+          </div>
+
+          <div class="input-group" style="margin-top:4px">
+            <label class="input-label" for="genero">
+              Género <span style="color:var(--muted);font-size:10px">(opcional)</span>
+            </label>
+            <select id="genero" name="genero" class="input-field">
+              <option value="">Prefiero no decirlo</option>
+              <option value="FEMENINO">Femenino</option>
+              <option value="MASCULINO">Masculino</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Términos y condiciones -->
+      <div class="terms-section">
+        <label class="check-wrapper" for="termsCheck">
+          <input type="checkbox" id="termsCheck">
+          <span>Acepto los <a href="#" id="termsLink">términos y condiciones</a></span>
+        </label>
+      </div>
+
+      <!-- Acciones -->
+      <div class="btn-actions">
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-user-plus"></i>
+          Registrarme
+        </button>
+
+        <div class="divider-text">¿Ya tienes una cuenta?</div>
+
+        <button type="button" id="loginBtn" class="btn-secondary">
+          <i class="fas fa-sign-in-alt"></i>
+          Iniciar sesión
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- CSS PARA MENSAJES (agregar a Registro.css) -->
+<!-- ========================================== -->
+<style>
+  .alert-message {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .alert-error {
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    color: #DC2626;
+  }
+
+  .alert-exito {
+    background: rgba(22, 163, 74, 0.12);
+    border: 1px solid rgba(22, 163, 74, 0.2);
+    color: #16A34A;
+  }
+
+  .alert-message i {
+    font-size: 1.1rem;
+  }
+</style>
+
+<script>
+  /* ── REFERENCIAS AL DOM ── */
+  const registerForm         = document.getElementById('registerForm');
+  const nombreInput          = document.getElementById('nombre');
+  const apellidoInput        = document.getElementById('apellido');
+  const cedulaInput          = document.getElementById('cedula');
+  const telefonoInput        = document.getElementById('telefono');
+  const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+  const direccionInput       = document.getElementById('direccion');
+  const correoInput          = document.getElementById('correo');
+  const passwordInput        = document.getElementById('password');
+  const confirmarPasswordInput = document.getElementById('confirmarPassword');
+  const showPasswordsCheck   = document.getElementById('showPasswordsCheck');
+  const termsCheck           = document.getElementById('termsCheck');
+  const loginBtn             = document.getElementById('loginBtn');
+  const termsLink            = document.getElementById('termsLink');
+
+  /* ── VALIDADORES ── */
+  function isValidEmail(e)    { return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(e); }
+  function isValidName(n)     { return /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)*$/.test(n); }
+  function isValidDocument(d) { return /^\d{6,12}$/.test(d); }
+  function isValidPhone(p)    { return /^3\d{9}$/.test(p); }
+  function isStrongPassword(p){ return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/.test(p); }
+  function normalizeText(v)   { return v.trim().replace(/\s+/g, ' '); }
+  function sanitizeName(v) {
+    return v.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]/g, '').replace(/\s+/g, ' ').replace(/^\s+/, '');
+  }
+  function isValidAge(dateString) {
+    const birth = new Date(dateString + 'T00:00:00');
+    const today = new Date();
+    if (Number.isNaN(birth.getTime()) || birth > today) return false;
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age >= 13;
+  }
+
+  /* ── MENSAJES DE ERROR ── */
+  function showError(input, message) {
+    const grp = input.closest('.input-group') || input.parentElement;
+    clearError(input);
+    const span = document.createElement('span');
+    span.className = 'error-msg';
+    span.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    input.classList.add('has-error');
+    grp.appendChild(span);
+  }
+
+  function clearError(input) {
+    const grp = input.closest('.input-group') || input.parentElement;
+    grp.querySelectorAll('.error-msg').forEach(e => e.remove());
+    input.classList.remove('has-error');
+  }
+
+  /* ── LIMPIEZA EN TIEMPO REAL ── */
+  [nombreInput, apellidoInput, cedulaInput, telefonoInput,
+   fechaNacimientoInput, direccionInput, correoInput,
+   passwordInput, confirmarPasswordInput].forEach(inp => {
+    inp.addEventListener('input',  () => clearError(inp));
+    inp.addEventListener('change', () => clearError(inp));
+  });
+
+  [cedulaInput, telefonoInput].forEach(inp => {
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, ''); });
+  });
+
+  [nombreInput, apellidoInput].forEach(inp => {
+    inp.addEventListener('input', () => { inp.value = sanitizeName(inp.value); });
+  });
+
+  /* ── MOSTRAR / OCULTAR CONTRASEÑAS ── */
+  showPasswordsCheck.addEventListener('change', () => {
+    const type = showPasswordsCheck.checked ? 'text' : 'password';
+    passwordInput.type = type;
+    confirmarPasswordInput.type = type;
+  });
+
+  /* ── DATOS NO PERMITIDOS ── */
+  const correosDesechables = new Set([
+    'mailinator.com', 'yopmail.com', 'guerrillamail.com',
+    '10minutemail.com', 'tempmail.com'
+  ]);
+  const passwordsComunes = new Set([
+    '12345678', 'password', 'qwerty123', 'admin123', '123456789', 'abc12345'
+  ]);
+
+  /* ── NAVEGACIÓN ── */
+  loginBtn.addEventListener('click', () => { window.location.href = "{% url 'login' %}"; });
+
+  termsLink.addEventListener('click', e => {
+    e.preventDefault();
+    alert(
+      '📜 Términos y condiciones de Nexus MMA\n\n' +
+      '1. Uso responsable de las instalaciones\n' +
+      '2. Respeto hacia los demás estudiantes\n' +
+      '3. Cumplir con las normas del gimnasio\n' +
+      '4. Puntualidad en las clases agendadas\n' +
+      '5. Mantener actualizados tus datos'
+    );
+  });
+
+  /* ── VALIDACIÓN AL ENVIAR ── */
+  registerForm.addEventListener('submit', e => {
+    let hasError = false;
+
+    nombreInput.value    = normalizeText(nombreInput.value);
+    apellidoInput.value  = normalizeText(apellidoInput.value);
+    direccionInput.value = normalizeText(direccionInput.value);
+    correoInput.value    = correoInput.value.trim().toLowerCase();
+    cedulaInput.value    = cedulaInput.value.trim();
+    telefonoInput.value  = telefonoInput.value.trim();
+
+    if (nombreInput.value.length < 2 || nombreInput.value.length > 60 || !isValidName(nombreInput.value)) {
+      showError(nombreInput, 'Nombre inválido: 2-60 caracteres, solo letras'); hasError = true;
+    }
+    if (apellidoInput.value.length < 2 || apellidoInput.value.length > 60 || !isValidName(apellidoInput.value)) {
+      showError(apellidoInput, 'Apellido inválido: 2-60 caracteres, solo letras'); hasError = true;
+    }
+    if (!isValidDocument(cedulaInput.value) ||
+        /^([0-9])\1+$/.test(cedulaInput.value) ||
+        ['123456', '123456789', '987654321'].includes(cedulaInput.value)) {
+      showError(cedulaInput, 'Documento inválido (mínimo 6 dígitos, solo números)'); hasError = true;
+    }
+    if (telefonoInput.value !== '' && !isValidPhone(telefonoInput.value)) {
+      showError(telefonoInput, 'Teléfono inválido: 10 dígitos, empieza por 3'); hasError = true;
+    }
+    if (!fechaNacimientoInput.value || !isValidAge(fechaNacimientoInput.value)) {
+      showError(fechaNacimientoInput, 'Debes ser mayor de 13 años y usar una fecha válida'); hasError = true;
+    }
+    if (!isValidEmail(correoInput.value)) {
+      showError(correoInput, 'Ingresa un correo válido con @ y dominio'); hasError = true;
+    } else {
+      const dom = correoInput.value.split('@')[1] || '';
+      if (correosDesechables.has(dom)) { showError(correoInput, 'No se permiten correos temporales'); hasError = true; }
+    }
+    if (!isStrongPassword(passwordInput.value.trim())) {
+      showError(passwordInput, 'Usa 8-72 caracteres con mayúscula, minúscula, número y símbolo'); hasError = true;
+    }
+    if (passwordsComunes.has(passwordInput.value.trim().toLowerCase())) {
+      showError(passwordInput, 'La contraseña es demasiado común'); hasError = true;
+    }
+    if (passwordInput.value.trim() !== confirmarPasswordInput.value.trim()) {
+      showError(confirmarPasswordInput, 'Las contraseñas no coinciden'); hasError = true;
+    }
+    if (!termsCheck.checked) {
+      alert('Debes aceptar los términos y condiciones para continuar.');
+      hasError = true;
+    }
+
+    if (hasError) e.preventDefault();
+  });
+</script>
+</body>
+</html>

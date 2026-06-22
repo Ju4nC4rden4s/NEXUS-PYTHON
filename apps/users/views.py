@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse
 from django.utils import timezone
+from django.contrib import messages
 from apps.classes.models import Class, ClassSession
 from apps.reservations.models import Reservation
-from apps.users.models import User
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 from apps.users.models import User, Coach
 
 
@@ -28,6 +29,98 @@ def dashboard(request):
         'reservas_totales': reservas_totales,
         'usuarios_registrados': usuarios_registrados,
     })
+
+def home(request):
+    return render(request, 'home.html', {
+        'user': request.user,
+    })
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            if user.role == User.Roles.ADMIN:
+                return redirect(f"{reverse('login')}?error=role_mismatch")
+            auth_login(request, user)
+            return redirect('dashboard')
+        return redirect(f"{reverse('login')}?error=true")
+
+    return render(request, 'registration/login.html', {
+        'open_admin_modal': request.GET.get('admin') == '1'
+    })
+
+
+def admin_login(request):
+    if request.method == 'GET':
+        return render(request, 'registration/login.html', {
+            'open_admin_modal': True,
+        })
+
+    form = AuthenticationForm(request, data=request.POST)
+    if form.is_valid():
+        user = form.get_user()
+        if user.role != User.Roles.ADMIN:
+            return redirect(f"{reverse('login')}?error=role_mismatch&admin=1")
+        auth_login(request, user)
+        return redirect('dashboard')
+
+    return redirect(f"{reverse('login')}?error=true&admin=1")
+
+
+def register(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', '').strip().lower()
+        nombre = request.POST.get('nombre', '').strip()
+        apellido = request.POST.get('apellido', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+        password = request.POST.get('password', '')
+
+        User.objects.create_user(
+            username=nombre.lower() + apellido.lower(),
+            email=correo,
+            first_name=nombre,
+            last_name=apellido,
+            phone=telefono,
+            password=password,
+            role=User.Roles.CLIENT
+        )
+
+        messages.success(
+            request,
+            'Cuenta creada correctamente. Ya puedes iniciar sesión.'
+        )
+
+        return redirect('login')
+
+    return render(request, 'registro.html')
+
+def register_admin(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', '').strip().lower()
+        nombre = request.POST.get('nombre', '').strip()
+        apellido = request.POST.get('apellido', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+        password = request.POST.get('password', '')
+
+        User.objects.create_user(
+            username=nombre.lower() + apellido.lower(),
+            email=correo,
+            first_name=nombre,
+            last_name=apellido,
+            phone=telefono,
+            password=password,
+            role=User.Roles.ADMIN
+        )
+
+        messages.success(
+            request,
+            'Cuenta de administrador creada correctamente. Ya puedes iniciar sesión.'
+        )
+
+        return redirect('admin_login')
+
+    return render(request, 'registration/registroAdmin.html')
 
 @login_required
 def users_list(request):
